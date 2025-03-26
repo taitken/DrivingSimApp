@@ -92,3 +92,4 @@ typings/
 out/
 backend/build/
 backend/dist/
+backend/app/

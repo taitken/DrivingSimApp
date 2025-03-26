@@ -16,12 +16,18 @@ if (require('electron-squirrel-startup')) {
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+    height: 1200,
+    width: 1600,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
+
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+    (details, callback) => {
+      callback({ requestHeaders: { Origin: '*', ...details.requestHeaders } });
+    },
+  );
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -58,7 +64,8 @@ app.on('ready', () => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': ['default-src \'*\'']
+        'Content-Security-Policy':  ["default-src 'self' http://127.0.0.1:5000; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; "],
+        'Access-Control-Allow-Origin': ['*'],
       }
     })
   })

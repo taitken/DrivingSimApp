@@ -18,6 +18,8 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-react": "^7.26.3",
     "@electron-forge/cli": "^7.8.0",
     "@electron-forge/maker-deb": "^7.8.0",
     "@electron-forge/maker-rpm": "^7.8.0",
@@ -27,22 +29,33 @@
     "@electron-forge/plugin-fuses": "^7.8.0",
     "@electron-forge/plugin-webpack": "^7.8.0",
     "@electron/fuses": "^1.8.0",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "autoprefixer": "^10.4.21",
+    "babel-loader": "^10.0.0",
     "css-loader": "^6.11.0",
     "electron": "35.1.0",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.31.0",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
     "node-loader": "^2.1.0",
+    "postcss-loader": "^8.1.1",
     "style-loader": "^3.3.4",
+    "tailwindcss": "^4.0.17",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4"
+    "typescript": "~4.5.4",
+    "vite": "^6.2.3"
   },
   "dependencies": {
     "axios": "^1.8.4",
-    "electron-squirrel-startup": "^1.0.1"
+    "bootstrap": "^5.3.3",
+    "electron-squirrel-startup": "^1.0.1",
+    "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
+    "react-dom": "^19.0.0"
   }
 }
