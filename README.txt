@@ -3,7 +3,7 @@
 #######################
 
 requires pip install pyinstaller to create an executable Flask app which is used by the Electron app:
-- pyinstaller -F app.py
+- pyinstaller -F --contents-directory backend --workpath backend/build --distpath backend/dist --workpath backend backend/app.py
 
 ##########################
     Electron Functions
