@@ -1,0 +1,9 @@
+
+/* Right Panel */
+.right-panel {
+    border-radius: 10px;
+    margin-top: 15px;
+    background-color: #ffffff;
+    /* or #fff, etc. */
+    padding: 30px;
+  }

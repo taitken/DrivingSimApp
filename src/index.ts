@@ -64,7 +64,7 @@ app.on('ready', () => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy':  ["default-src 'self' http://127.0.0.1:5000; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; "],
+        'Content-Security-Policy':  ["default-src 'self' http://127.0.0.1:5000; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src 'self' data: blob: *;"],
         'Access-Control-Allow-Origin': ['*'],
       }
     })

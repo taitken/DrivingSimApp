@@ -1,0 +1,19 @@
+/* Main Container: Left & Right Panels */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  /* so it fills the full browser height */
+}
+
+
+.canvas-container {
+  position: relative;
+  width: 640px;
+  height: 360px;
+  margin: 0 auto;
+}
+
+#calibrationCanvas {
+  display: block;
+}
+
