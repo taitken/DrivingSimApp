@@ -1,9 +1,9 @@
 import './ui-button.css';
 
-export function UiButton({ children }: { children: any }) {
+export function UiButton({ children, onClick }: { children: any , onClick?: ()=>void}) {
     return (
         <>
-            <div className="button-style">{children}</div>
+            <div className="button-style" onClick={onClick}>{children}</div>
         </>
     )
 }   

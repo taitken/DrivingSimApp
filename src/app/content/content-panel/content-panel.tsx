@@ -4,7 +4,7 @@ import './content-panel.css'
 export function ContentPanel() {
     return (
         <>
-            <div className="right-panel">
+            <div className="content-panel">
                 <CalibrationVideo></CalibrationVideo>
             </div>
         </>

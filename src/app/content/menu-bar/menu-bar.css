@@ -1,9 +1,11 @@
 /* Left Panel (Instructions) */
 .left-panel {
-    padding: 15px;
+    padding: 50px;
     border-radius: 10px;
     background-color: #f4f5f6;
+    width: 20%;
     min-width: 250px;
+    text-align: center;
   }
 
   

@@ -6,12 +6,6 @@
 }
 
 
-.canvas-container {
-  position: relative;
-  width: 640px;
-  height: 360px;
-  margin: 0 auto;
-}
 
 #calibrationCanvas {
   display: block;

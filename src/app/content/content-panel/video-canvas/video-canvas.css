@@ -1,3 +1,12 @@
+.canvas-container {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+}
+
+
 .drop-zone {
     position: absolute;
     top: 0;
@@ -19,6 +28,7 @@
   .drop-zone:hover {
     border-color: #999;
   }
+
   
   .drop-zone__prompt {
     font-size: 15px;
@@ -27,4 +37,8 @@
   
   .drop-zone__input {
     display: none;
+  }
+
+  .video-canvas{
+    top: 0;
   }
