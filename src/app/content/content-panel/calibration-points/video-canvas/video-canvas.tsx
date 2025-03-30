@@ -28,21 +28,22 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             if (e.deltaY > 0) thumbnailContainerRef.current.scrollLeft += 5;
             else thumbnailContainerRef.current.scrollLeft -= 5;
         });
-        
+
         ServiceProvider.stateService.subscribeImmediatelyToStateTrigger(StateTrigger.VIDEO_FILE_SECLECTED, (newVideoFile => {
             onVideoDrop(newVideoFile);
         }));
         ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.VIDEO_SECTION_SELECTED, (newVideoSectionXY => {
-            selectVideoSection(selectedVideo == newVideoSectionXY ? new xy(0, 0) : newVideoSectionXY)
+            if (videoRef.current)
+                selectVideoSection(selectedVideo == newVideoSectionXY ? new xy(0, 0) : newVideoSectionXY)
         }));
-    },[]);
+    }, []);
 
     useEffect(() => {
         onSeekedVideo();
     }, [rowCols])
 
     function onVideoDrop(selectedFile: File) {
-        if (selectedFile) {
+        if (selectedFile && videoRef.current) {
             const fileURL = URL.createObjectURL(selectedFile);
             const video = videoRef.current;
             video.src = fileURL;
@@ -69,6 +70,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             generateThumbnails();
         }
     }
+
 
     function drawGridLines() {
         const verticalLines = rowCols.x - 1;
@@ -136,8 +138,8 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             drawVideoOnCanvas(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight, 0, 0, videoRef.current.clientWidth, videoRef.current.clientHeight);
             drawGridLines();
         } else {
+            drawVideoOnCanvas(videoRef.current, frameWidth * (xy.x - 1), frameHeight * (xy.y - 1), frameWidth, frameHeight, 0, 0, videoRef.current.clientWidth, videoRef.current.clientHeight);
         }
-        drawVideoOnCanvas(videoRef.current, frameWidth * (xy.x - 1), frameHeight * (xy.y - 1), frameWidth, frameHeight, 0, 0, videoRef.current.clientWidth, videoRef.current.clientHeight);
     }
 
     function generateThumbnails() {

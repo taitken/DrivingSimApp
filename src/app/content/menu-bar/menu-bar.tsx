@@ -31,6 +31,10 @@ export default function MenuBar() {
         return "";
     }
 
+    function resetToStart(){
+        ServiceProvider.stateService.updateState(StateTrigger.MENU_STEP, MenuStep.UPLOAD_VIDEO)
+    }
+
     return (
         <div className="left-panel">
             <h1>
@@ -74,7 +78,7 @@ export default function MenuBar() {
 
             <div className="d-flex justify-content-center">
                 <div className="me-1"><UiButton>Confirm points</UiButton></div>
-                <div><UiButton>Reset</UiButton></div>
+                <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
             </div>
 
             <div className="divider"></div>
