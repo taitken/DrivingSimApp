@@ -18,13 +18,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     border: 2px dashed #ccc;
     background-color: white;
     cursor: pointer;
     transition: background-color 0.3s, border-color 0.3s;
   }
 
+  
   .drop-zone-drag-over{
     background-color:rgb(242, 251, 255);
   }

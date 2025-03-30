@@ -1,24 +1,19 @@
 import { useRef, useState, useEffect } from "react";
-import { xy } from "../../../../models/xy.model";
-import { ServiceProvider } from "../../../../services/service-provider.service";
-import { StateTrigger } from "../../../../services/state.service";
+import { xy } from "../../../../../models/xy.model";
+import { ServiceProvider } from "../../../../../services/service-provider.service";
+import { StateTrigger } from "../../../../../services/state.service";
 import { VideoCanvasThumbnail } from "./video-canvas-thumbnail/video-canvas-thumbnail";
 import './video-canvas.css'
 
 
 export function VideoCanvas({ rowCols }: { rowCols: xy }) {
     const calibrationCanvas = useRef<HTMLCanvasElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const dropZone = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const thumbnailContainerRef = useRef<HTMLDivElement>(null);
-    const [dragOver, setdragOver] = useState(false);
-    const [videoSelected, setVideoSelected] = useState(false);
     const [thumbnails, setThumbnails] = useState([]);
     const scaleFactor: number = 5;
     let frameWidth: number;
     let frameHeight: number;
-    let selectedFile;
     let selectedVideo: xy;
     let selectedPoints: xy[] = [];
 
@@ -33,48 +28,20 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             if (e.deltaY > 0) thumbnailContainerRef.current.scrollLeft += 5;
             else thumbnailContainerRef.current.scrollLeft -= 5;
         });
-
-        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.VIDEO_SECTION_SELECTED, (newVideoSectionXY => {
-            selectVideoSection(newVideoSectionXY)
+        
+        ServiceProvider.stateService.subscribeImmediatelyToStateTrigger(StateTrigger.VIDEO_FILE_SECLECTED, (newVideoFile => {
+            onVideoDrop(newVideoFile);
         }));
-    });
-
+        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.VIDEO_SECTION_SELECTED, (newVideoSectionXY => {
+            selectVideoSection(selectedVideo == newVideoSectionXY ? new xy(0, 0) : newVideoSectionXY)
+        }));
+    },[]);
 
     useEffect(() => {
-        console.log("here")
         onSeekedVideo();
     }, [rowCols])
 
-    function handleDragOverEvent(ev) {
-        ev.preventDefault();
-        ev.dataTransfer.dropEffect = "copy";
-        setdragOver(true);
-    }
-
-    function handleDragEnd(ev) {
-        console.log("leave")
-        ev.preventDefault();
-        setdragOver(false);
-    }
-
-    function handleDrop(ev) {
-        ev.preventDefault();
-        if (ev.dataTransfer.files.length) {
-            onVideoDrop(ev.dataTransfer.files)
-        }
-    }
-
-    function handleClick() {
-        inputRef.current.click();
-    }
-
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        onVideoDrop(e.target.files);
-    }
-
-    function onVideoDrop(fileList: FileList) {
-        setVideoSelected(true);
-        selectedFile = fileList[0];
+    function onVideoDrop(selectedFile: File) {
         if (selectedFile) {
             const fileURL = URL.createObjectURL(selectedFile);
             const video = videoRef.current;
@@ -99,18 +66,6 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             frameWidth = videoRef.current.videoWidth / rowCols.x;
             frameHeight = videoRef.current.videoHeight / rowCols.y;
             selectVideoSection(new xy(0, 0));
-
-            // Update heading states:
-            // Mark "Upload calibration video" as completed (green)
-            const uploadHeading = document.getElementById('uploadVideoHeading');
-            if (uploadHeading) {
-                uploadHeading.classList.add('completed');
-            }
-            // Mark "Select calibration points" as active (green)
-            const selectHeading = document.getElementById('selectPointsHeading');
-            if (selectHeading) {
-                selectHeading.classList.add('active');
-            }
             generateThumbnails();
         }
     }
@@ -175,8 +130,6 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
         }
     }
 
-
-
     function selectVideoSection(xy: xy) {
         selectedVideo = xy;
         if (xy.x == 0 && xy.y == 0) {
@@ -188,21 +141,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
     }
 
     function generateThumbnails() {
-        const newThumbnails = [
-            <div className="m-2" key={"00"}>
-                <VideoCanvasThumbnail
-                    image={videoRef.current}
-                    xy={{ x: 0, y: 0 }}
-                    width={videoRef.current.clientWidth / scaleFactor}
-                    height={videoRef.current.clientHeight / scaleFactor}
-                    sx={0}
-                    sy={0}
-                    sw={videoRef.current.videoWidth}
-                    sh={videoRef.current.videoHeight}></VideoCanvasThumbnail>
-            </div>
-        ];
-
-
+        const newThumbnails = [];
         for (let x = 1; x <= rowCols.x; x++) {
             for (let y = 1; y <= rowCols.y; y++) {
                 newThumbnails.push(
@@ -231,27 +170,6 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
                     <video ref={videoRef}></video>
                     <canvas className="video-canvas position-absolute" ref={calibrationCanvas}
                         onClick={selectCanvasDot}></canvas>
-                </div>
-                <div className={videoSelected ? "hidden" : "drop-zone-container"}>
-                    <div ref={dropZone} className={"drop-zone ".concat(dragOver ? "drop-zone-drag-over " : "")}
-                        id="calibrationDropZone"
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOverEvent}
-                        onDragLeave={handleDragEnd}
-                        onClick={handleClick}
-                    >
-                        <span className="drop-zone__prompt">
-                            <i className="fa fa-upload"></i>
-                            Drop your .mkv here or <strong>Browse files</strong>
-                        </span>
-                        <input
-                            type="file"
-                            ref={inputRef}
-                            className="drop-zone__input"
-                            accept=".mkv,video/*"
-                            onChange={handleChange}
-                        />
-                    </div>
                 </div>
             </div >
             <div className="d-flex w-100 overflow-auto" ref={thumbnailContainerRef}>

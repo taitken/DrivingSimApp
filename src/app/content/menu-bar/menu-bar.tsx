@@ -6,18 +6,30 @@ import { useEffect, useState } from "react";
 import { xy } from "../../../models/xy.model";
 import { ServiceProvider } from "../../../services/service-provider.service";
 import { StateTrigger } from "../../../services/state.service";
+import { MenuStep } from "../../../models/enums/menu-steps.enum";
 
 
 
 export default function MenuBar() {
-    const [selectedPoints, setSelectedPoints] = useState([new xy(0,0), new xy(0,0), new xy(0,0), new xy(0,0)]);
+    const [currentMenuStep, sesMenuStep] = useState(MenuStep.UPLOAD_VIDEO);
+    const [selectedPoints, setSelectedPoints] = useState([new xy(0, 0), new xy(0, 0), new xy(0, 0), new xy(0, 0)]);
 
     useEffect(() => {
-        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.CALIBRATION_POINTS, (newSelectedPoints) =>{
+        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.CALIBRATION_POINTS, (newSelectedPoints) => {
             setSelectedPoints(newSelectedPoints)
+        });
+        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.MENU_STEP, (newMenuStep: MenuStep) => {
+            sesMenuStep(newMenuStep)
+        });
     });
 
-    });
+    function getMenuHightlight(thisMenuStep: MenuStep, selectedMenuStep: MenuStep): string {
+        if (thisMenuStep == selectedMenuStep)
+            return "menu-heading-selected";
+        if (thisMenuStep < selectedMenuStep)
+            return "menu-heading-completed"
+        return "";
+    }
 
     return (
         <div className="left-panel">
@@ -26,11 +38,11 @@ export default function MenuBar() {
                 Camera Calibration
             </h1>
             <div className="divider"></div>
-            <h2 id="uploadVideoHeading" className="highlighted">
+            <h2 className={getMenuHightlight(MenuStep.UPLOAD_VIDEO, currentMenuStep)}>
                 <span className="heading-circle">1</span>
                 Upload calibration video
             </h2>
-            <h2 id="selectPointsHeading">
+            <h2 className={getMenuHightlight(MenuStep.SELECT_POINTS, currentMenuStep)}>
                 <span className="heading-circle">2</span>
                 Select calibration points
             </h2>

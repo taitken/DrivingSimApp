@@ -1,22 +1,69 @@
-import { useState } from "react";
-import { VideoCanvas } from "../video-canvas/video-canvas";
-import { xy } from "../../../../models/xy.model";
-import React from "react";
+import { useEffect, useRef, useState } from "react";
+import { StateTrigger } from "../../../../services/state.service";
+import { ServiceProvider } from "../../../../services/service-provider.service";
+import { MenuStep } from "../../../../models/enums/menu-steps.enum";
 
 export function CalibrationVideo() {
-    const [rowCols, setRowCols] = useState(new xy(2, 2));
+    const inputRef = useRef<HTMLInputElement>(null);
+    const dropZone = useRef<HTMLDivElement>(null);
+    const [dragOver, setdragOver] = useState(false);
+
+    function handleDragOverEvent(ev) {
+        ev.preventDefault();
+        ev.dataTransfer.dropEffect = "copy";
+        setdragOver(true);
+    }
+
+    function handleDragEnd(ev) {
+        ev.preventDefault();
+        setdragOver(false);
+    }
+
+    function handleDrop(ev) {
+        ev.preventDefault();
+        if (ev.dataTransfer.files.length) {
+            onVideoDrop(ev.dataTransfer.files)
+        }
+    }
+
+    function handleClick() {
+        inputRef.current.click();
+    }
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        onVideoDrop(e.target.files);
+    }
+
+    function onVideoDrop(fileList: FileList) {
+        ServiceProvider.stateService.updateState(StateTrigger.VIDEO_FILE_SECLECTED, fileList[0]);
+        ServiceProvider.stateService.updateState(StateTrigger.MENU_STEP, MenuStep.SELECT_POINTS);
+    }
 
     return (
         <>
-            <div className="mb-2">
-                <label className="me-2">
-                    Columns: <input name="myInput" value={rowCols.x} onChange={(e) => { setRowCols(new xy(+e.target.value, rowCols.y)) }} />
-                </label>
-                <label>
-                    Rows: <input name="myInput" value={rowCols.y} onChange={(e) => { setRowCols(new xy(rowCols.x, +e.target.value)) }} />
-                </label>
-            </div>
-            <VideoCanvas rowCols={rowCols}></VideoCanvas>
+            <div className="canvas-container">
+                <div className={"drop-zone-container"}>
+                    <div ref={dropZone} className={"drop-zone ".concat(dragOver ? "drop-zone-drag-over " : "")}
+                        id="calibrationDropZone"
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOverEvent}
+                        onDragLeave={handleDragEnd}
+                        onClick={handleClick}
+                    >
+                        <span className="drop-zone__prompt">
+                            <i className="fa fa-upload"></i>
+                            Drop your .mkv here or <strong>Browse files</strong>
+                        </span>
+                        <input
+                            type="file"
+                            ref={inputRef}
+                            className="drop-zone__input"
+                            accept=".mkv,video/*"
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+            </div >
         </>
     )
 }
