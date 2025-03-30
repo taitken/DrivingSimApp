@@ -41,6 +41,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
 
 
     useEffect(() => {
+        console.log("here")
         onSeekedVideo();
     }, [rowCols])
 
@@ -94,7 +95,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
     }
 
     function onSeekedVideo() {
-        if (selectedFile) {
+        if (true) {
             frameWidth = videoRef.current.videoWidth / rowCols.x;
             frameHeight = videoRef.current.videoHeight / rowCols.y;
             selectVideoSection(new xy(0, 0));
@@ -231,7 +232,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
                     <canvas className="video-canvas position-absolute" ref={calibrationCanvas}
                         onClick={selectCanvasDot}></canvas>
                 </div>
-                <div className={videoSelected ? "hidden" : ""}>
+                <div className={videoSelected ? "hidden" : "drop-zone-container"}>
                     <div ref={dropZone} className={"drop-zone ".concat(dragOver ? "drop-zone-drag-over " : "")}
                         id="calibrationDropZone"
                         onDrop={handleDrop}

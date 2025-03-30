@@ -14,9 +14,7 @@ export default function MenuBar() {
 
     useEffect(() => {
         ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.CALIBRATION_POINTS, (newSelectedPoints) =>{
-            console.log(newSelectedPoints[0]?.toString())
             setSelectedPoints(newSelectedPoints)
-            console.log(selectedPoints)
     });
 
     });
@@ -42,8 +40,8 @@ export default function MenuBar() {
                         <div className="w-50 d-flex me-2">
                             <label className="me-2 ">1:</label>
                             <input disabled name="myInput" value={selectedPoints[0]?.toString() ?? "0,0"} />
-                            <div>{selectedPoints[0]?.toString() ?? "0,0"}</div>
                         </div>
+
                         <div className="w-50 d-flex">
                             <label className="me-2 ">2:</label>
                             <input disabled name="myInput" value={selectedPoints[1]?.toString() ?? "0,0"} />
