@@ -11,10 +11,10 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const thumbnailContainerRef = useRef<HTMLDivElement>(null);
     const [thumbnails, setThumbnails] = useState([]);
+    const [selectedSection, setSelectedSection] = useState(null)
     const scaleFactor: number = 5;
     let frameWidth: number;
     let frameHeight: number;
-    let selectedVideo: xy;
     let selectedPoints: xy[] = [];
 
     window.onresize = function () {
@@ -33,8 +33,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             onVideoDrop(newVideoFile);
         }));
         ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.VIDEO_SECTION_SELECTED, (newVideoSectionXY => {
-            if (videoRef.current)
-                selectVideoSection(selectedVideo == newVideoSectionXY ? new xy(0, 0) : newVideoSectionXY)
+            selectVideoSection(selectedSection == newVideoSectionXY ? new xy(0, 0) : newVideoSectionXY)
         }));
     }, []);
 
@@ -94,8 +93,8 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
     }
 
     function selectCanvasDot(event) {
-        if (selectedVideo &&
-            !(selectedVideo.x == 0 && selectedVideo.y == 0)
+        if (selectedSection &&
+            !(selectedSection.x == 0 && selectedSection.y == 0)
             && selectedPoints.length < 4) {
             let ctx = calibrationCanvas.current.getContext('2d');
             let rect = calibrationCanvas.current.getBoundingClientRect();
@@ -106,15 +105,15 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
 
             if (selectedPoints.length == 4) {
                 selectedPoints.sort((a, b) => {
-                    if (a.y == b.y) return a.x - b.x;
-                    return a.y - b.y;
-                });
-                let orderedPoints = [selectedPoints[0], selectedPoints[1]].sort((a, b) => {
                     if (a.x == b.x) return a.y - b.y;
                     return a.x - b.x;
+                });
+                let orderedPoints = [selectedPoints[0], selectedPoints[1]].sort((a, b) => {
+                    if (a.y == b.y) return a.x - b.x;
+                    return a.y - b.y;
                 }).concat([selectedPoints[2], selectedPoints[3]].sort((a, b) => {
-                    if (a.x == b.x) return b.y - a.y;
-                    return b.x - a.x;
+                    if (a.y == b.y) return b.x - a.x;
+                    return b.y - a.y;
                 }));
 
                 ctx.strokeStyle = "yellow";
@@ -128,17 +127,16 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
                 ctx.stroke();
                 ServiceProvider.stateService.updateState(StateTrigger.CALIBRATION_POINTS, selectedPoints);
             }
-
         }
     }
 
     function selectVideoSection(xy: xy) {
-        selectedVideo = xy;
+        setSelectedSection(xy);
         if (xy.x == 0 && xy.y == 0) {
             drawVideoOnCanvas(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight, 0, 0, videoRef.current.clientWidth, videoRef.current.clientHeight);
             drawGridLines();
         } else {
-            drawVideoOnCanvas(videoRef.current, frameWidth * (xy.x - 1), frameHeight * (xy.y - 1), frameWidth, frameHeight, 0, 0, videoRef.current.clientWidth, videoRef.current.clientHeight);
+            drawVideoOnCanvas(videoRef.current, frameWidth * (xy.x - 1), frameHeight * (xy.y - 1), frameWidth, frameHeight, 0, 0, videoRef.current?.clientWidth, videoRef.current?.clientHeight);
         }
     }
 

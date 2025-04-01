@@ -5,6 +5,7 @@ import os
 import json  
 import tkinter as tk
 from tkinter import filedialog
+from backend.services.calibration_service import CalibrationService
 
 # This script is for 
 # 1) calculating homography calibration matrix and 
@@ -20,6 +21,7 @@ REAL_WORLD_POINTS_PATH = os.getcwd() + os.getenv('REAL_WORLD_POINTS_PATH')
 OUTPUT_PATH = os.getcwd() + os.getenv('OUTPUT_PATH')
 
 # Load calibration data
+calibration_service = CalibrationService()
 calibration_data = np.load(CALIBRATION_DATA_PATH) # this calibration is for correcting wide angle
 camera_matrix = calibration_data['camera_matrix']
 dist_coeffs = calibration_data['dist_coeffs']
@@ -107,63 +109,16 @@ image_points = np.array(points, dtype=np.float32)
 #     [0, 200]
 # ], dtype=np.float32)
 
-def input_real_world_points(file_name=REAL_WORLD_POINTS_PATH):
-    """
-    Interactively prompts the user to input real-world coordinates and automatically saves them.
-    """
-    print("\nEnter the real-world coordinates (in centimeters) for the 4 points, ensuring the sequence matches the order in which you clicked the points in the previous video.")
-    real_world_points = []
-    
-    for i in range(4):  # Assuming 4 points are needed
-        print(f"Point {i + 1}:")
-        x = float(input("  Enter x-coordinate: "))
-        y = float(input("  Enter y-coordinate: "))
-        real_world_points.append([x, y])
-    
-    real_world_points = np.array(real_world_points, dtype=np.float32)
-    print("\nReal-world points:")
-    print(real_world_points)
-    
-    # Save the points automatically to the specified file
-    np.save(file_name, real_world_points)
-    print(f"\nReal-world points automatically saved to '{file_name}'.")
-    
-    return real_world_points
-
-def get_real_world_points(file_name=REAL_WORLD_POINTS_PATH):
-    """
-    Checks if real-world points have been entered previously. If yes, loads them.
-    Otherwise, prompts the user to enter the points manually and saves them.
-    """
-    if os.path.exists(file_name):
-        use_previous = input(f"Real-world points file '{file_name}' found. Do you want to use the previously saved points? (yes/no): ").strip().lower()
-        if use_previous == "yes":
-            # Load the points from the file
-            real_world_points = np.load(file_name)
-            print("\nUsing previously saved real-world points:")
-            print(real_world_points)
-            return real_world_points
-    # If no file exists or user chooses not to use the previous points
-    return input_real_world_points(file_name)
-
-# Call the function to input points
-real_world_points = get_real_world_points()
-
-# Compute the homography matrix
+# Call the function to input points, Compute the homography matrix, Save the homography matrix to a JSON file
+real_world_points = calibration_service.get_real_world_points()
 H, _ = cv2.findHomography(image_points, real_world_points)
-
-# Save the homography matrix to a JSON file
+H_list = H.tolist()
 base_name = os.path.splitext(os.path.basename(video_path))[0]  
 homography_file = os.path.join(OUTPUT_PATH, f'{base_name}_homography_matrix.json')
-
-# Convert the matrix to a Python list for JSON serialization
-H_list = H.tolist()
 
 # Write to JSON file
 with open(homography_file, 'w') as f:
     json.dump({"homography_matrix": H_list}, f)
-
-print(f"Homography matrix saved to {homography_file}")
 
 ########################################################################################################
 # Step 3: Randomly select two pixel points in the image with a known physical distance in the real world
@@ -232,29 +187,12 @@ cv2.destroyAllWindows()
 # Example points in the image (pixel coordinates)
 points = points  # Replace these with your captured pixel points
 
-# Function to map a pixel point to real-world coordinates
-def pixel_to_real_world(pixel_point, homography_matrix):
-    """
-    Maps a pixel point to real-world coordinates using the homography matrix.
-    """
-    # Convert the pixel point to homogeneous coordinates
-    pixel_point_homogeneous = np.array([[pixel_point[0], pixel_point[1], 1]], dtype=np.float32).T
-
-    # Apply the homography transformation
-    real_world_point = np.dot(homography_matrix, pixel_point_homogeneous)
-
-    # Normalize the coordinates
-    real_world_x = real_world_point[0] / real_world_point[2]
-    real_world_y = real_world_point[1] / real_world_point[2]
-
-    return real_world_x[0], real_world_y[0]  # Extract scalar values
-
 # Variable to store real-world points
 real_world_points = []
 
 # Calculate real-world coordinates for each point and save them
 for point in points:
-    real_world_x, real_world_y = pixel_to_real_world(point, H)
+    real_world_x, real_world_y = calibration_service.pixel_to_real_world(point, H)
     real_world_points.append((real_world_x, real_world_y))
 
 # Print and save the real-world points
@@ -264,18 +202,8 @@ print("Real-world points:", real_world_points)
 # Step 4: Calculate the real-world distance between the selected two points in the image
 ########################################################################################################
 
-# Function to calculate the Euclidean distance between two points
-def calculate_distance(point1, point2):
-    """
-    Calculate the Euclidean distance between two 2D points.
-    """
-    x1, y1 = point1
-    x2, y2 = point2
-    distance = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-    return distance
-
 # Calculate the distance between the two points
-distance = calculate_distance(real_world_points[0], real_world_points[1])
+distance = calibration_service.calculate_distance(real_world_points[0], real_world_points[1])
 
 # Print the distance
 print(f"Distance between the two points: {distance:.2f} cm")

@@ -8,8 +8,6 @@ import { ServiceProvider } from "../../../services/service-provider.service";
 import { StateTrigger } from "../../../services/state.service";
 import { MenuStep } from "../../../models/enums/menu-steps.enum";
 
-
-
 export default function MenuBar() {
     const [currentMenuStep, sesMenuStep] = useState(MenuStep.UPLOAD_VIDEO);
     const [selectedPoints, setSelectedPoints] = useState([new xy(0, 0), new xy(0, 0), new xy(0, 0), new xy(0, 0)]);
@@ -23,6 +21,13 @@ export default function MenuBar() {
         });
     });
 
+    function getSelectedPointCoorString(points: xy) {
+        if (points == null)
+            return "0, 0"
+
+        return Math.round(points.x).toString() + ", " + Math.round(points.y).toString()
+    }
+
     function getMenuHightlight(thisMenuStep: MenuStep, selectedMenuStep: MenuStep): string {
         if (thisMenuStep == selectedMenuStep)
             return "menu-heading-selected";
@@ -31,8 +36,15 @@ export default function MenuBar() {
         return "";
     }
 
-    function resetToStart(){
+    function hitEndpoint()
+    {
+        ServiceProvider.backendService.sendAxios([new xy(1,1), new xy(1,1), new xy(1,1), new xy(1,1)]);
+        //ServiceProvider.backendService.sendTest();
+    }
+
+    function resetToStart() {
         ServiceProvider.stateService.updateState(StateTrigger.MENU_STEP, MenuStep.UPLOAD_VIDEO)
+        ServiceProvider.stateService.updateState(StateTrigger.CALIBRATION_POINTS, []);
     }
 
     return (
@@ -55,29 +67,29 @@ export default function MenuBar() {
                     <div className="d-flex mb-2">
                         <div className="w-50 d-flex me-2">
                             <label className="me-2 ">1:</label>
-                            <input disabled name="myInput" value={selectedPoints[0]?.toString() ?? "0,0"} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints[0])} />
                         </div>
 
                         <div className="w-50 d-flex">
                             <label className="me-2 ">2:</label>
-                            <input disabled name="myInput" value={selectedPoints[1]?.toString() ?? "0,0"} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints[2])} />
                         </div>
                     </div>
                     <div className="d-flex">
                         <div className="w-50 d-flex me-2">
                             <label className="me-2 ">3:</label>
-                            <input disabled name="myInput" value={selectedPoints[2]?.toString() ?? "0,0"} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints[1])} />
                         </div>
                         <div className="w-50 d-flex">
                             <label className="me-2 ">4:</label>
-                            <input disabled name="myInput" value={selectedPoints[3]?.toString() ?? "0,0"} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints[3])} />
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="d-flex justify-content-center">
-                <div className="me-1"><UiButton>Confirm points</UiButton></div>
+                <div className="me-1"><UiButton onClick={hitEndpoint}>Confirm points</UiButton></div>
                 <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
             </div>
 
