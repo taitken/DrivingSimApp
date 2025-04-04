@@ -14,11 +14,6 @@ from backend.services.calibration_service import CalibrationService
 # Output: Homography matrix (saved in folder "output") and real_world_points.npy
 # Note: A 2 × 10 chessboard grid, where each grid cell measured 35 cm × 20 cm
 
-# Define constants
-dotenv.load_dotenv()
-CALIBRATION_DATA_PATH = os.getcwd() + os.getenv('CALIBRATION_DATA_PATH')
-REAL_WORLD_POINTS_PATH = os.getcwd() + os.getenv('REAL_WORLD_POINTS_PATH')
-OUTPUT_PATH = os.getcwd() + os.getenv('OUTPUT_PATH')
 
 # Load calibration data
 calibration_service = CalibrationService()
@@ -102,15 +97,14 @@ cv2.destroyAllWindows()
 image_points = np.array(points, dtype=np.float32)
 
 # Real-world points (corresponding real-world coordinates in centimeters)
-# real_world_points = np.array([
-#     [0, 0],
-#     [100, 0],
-#     [100, 200],
-#     [0, 200]
-# ], dtype=np.float32)
+real_world_points = np.array([
+    [0, 0],
+    [100, 0],
+    [100, 200],
+    [0, 200]
+], dtype=np.float32)
 
 # Call the function to input points, Compute the homography matrix, Save the homography matrix to a JSON file
-real_world_points = calibration_service.get_real_world_points()
 H, _ = cv2.findHomography(image_points, real_world_points)
 H_list = H.tolist()
 base_name = os.path.splitext(os.path.basename(video_path))[0]  

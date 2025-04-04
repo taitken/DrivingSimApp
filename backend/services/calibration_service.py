@@ -1,62 +1,52 @@
 # Define constants
+import json
 import os
-import dotenv
+import cv2
 import numpy as np
+from models.xy import XY
+
 
 class CalibrationService:
-    dotenv.load_dotenv()
-    CALIBRATION_DATA_PATH = os.getcwd() + os.getenv('CALIBRATION_DATA_PATH')
-    REAL_WORLD_POINTS_PATH = os.getcwd() + os.getenv('REAL_WORLD_POINTS_PATH')
-    OUTPUT_PATH = os.getcwd() + os.getenv('OUTPUT_PATH')
+    OUTPUT_PATH = os.getcwd() + '\\backend\\resources'
 
-    def input_real_world_points(file_name=REAL_WORLD_POINTS_PATH):
+    def perform_homography_mtx_calculation(self, _calibration_points: list[XY], _real_world_points: list[XY], _test_points: list[XY], video_file_name: str):
         """
-        Interactively prompts the user to input real-world coordinates and automatically saves them.
+        Creates a homography matrix, and maps two given test points
         """
-        print("\nEnter the real-world coordinates (in centimeters) for the 4 points, ensuring the sequence matches the order in which you clicked the points in the previous video.")
-        real_world_points = []
-        
-        for i in range(4):  # Assuming 4 points are needed
-            print(f"Point {i + 1}:")
-            x = float(input("  Enter x-coordinate: "))
-            y = float(input("  Enter y-coordinate: "))
-            real_world_points.append([x, y])
-        
-        real_world_points = np.array(real_world_points, dtype=np.float32)
-        print("\nReal-world points:")
-        print(real_world_points)
-        
-        # Save the points automatically to the specified file
-        np.save(file_name, real_world_points)
-        print(f"\nReal-world points automatically saved to '{file_name}'.")
-        
-        return real_world_points
-    
-    def get_real_world_points(file_name=REAL_WORLD_POINTS_PATH):
-        """
-        Checks if real-world points have been entered previously. If yes, loads them.
-        Otherwise, prompts the user to enter the points manually and saves them.
-        """
-        if os.path.exists(file_name):
-            use_previous = input(f"Real-world points file '{file_name}' found. Do you want to use the previously saved points? (yes/no): ").strip().lower()
-            if use_previous == "yes":
-                # Load the points from the file
-                real_world_points = np.load(file_name)
-                print("\nUsing previously saved real-world points:")
-                print(real_world_points)
-                return real_world_points
-        # If no file exists or user chooses not to use the previous points
-        return CalibrationService.input_real_world_points(file_name)
-    
+        calibration_points = self.__convert_xy_to_tuple_list(_calibration_points)
+        real_world_points = self.__convert_xy_to_tuple_list(_real_world_points)
+        test_points = self.__convert_xy_to_tuple_list(_test_points)
+        # Call the function to input points, Compute the homography matrix, Save the homography matrix to a JSON file
+        H, _ = cv2.findHomography(np.array(calibration_points, dtype=np.float32), np.array(real_world_points, dtype=np.float32))
+        self.__save_homography_matrix(os.path.join(self.OUTPUT_PATH, f'{os.path.splitext(video_file_name)[0]}_homography_matrix.json'), H.tolist())
+
+        # Calculate real-world coordinates for each point and save them
+        test_real_world_points = []
+        for tPoint in test_points:
+            real_world_x, real_world_y = self.__pixel_to_real_world(tPoint, H)
+            test_real_world_points.append((real_world_x, real_world_y))
+        print("Real-world points:", test_real_world_points)
+
+        # Calculate the distance between the two points
+        distance = self.__calculate_distance(test_real_world_points[0], test_real_world_points[1])
+        print(f"Distance between the two points: {distance:.2f} cm")
+
+        return f"{distance:.2f}"
+
+    @staticmethod
+    def __save_homography_matrix(homography_file: str, H_list) -> list[XY]:
+        # Write to JSON file
+        with open(homography_file, 'w') as f:
+            json.dump({"homography_matrix": H_list}, f)
+
     # Function to map a pixel point to real-world coordinates
-    def pixel_to_real_world(pixel_point, homography_matrix):
+    @staticmethod
+    def __pixel_to_real_world(pixel_point: XY, homography_matrix):
         """
         Maps a pixel point to real-world coordinates using the homography matrix.
         """
-        # Convert the pixel point to homogeneous coordinates
+        # Convert the pixel point to homogeneous coordinates, and Apply the homography transformation
         pixel_point_homogeneous = np.array([[pixel_point[0], pixel_point[1], 1]], dtype=np.float32).T
-
-        # Apply the homography transformation
         real_world_point = np.dot(homography_matrix, pixel_point_homogeneous)
 
         # Normalize the coordinates
@@ -66,7 +56,8 @@ class CalibrationService:
         return real_world_x[0], real_world_y[0]  # Extract scalar values
     
     # Function to calculate the Euclidean distance between two points
-    def calculate_distance(point1, point2):
+    @staticmethod
+    def __calculate_distance(point1, point2):
         """
         Calculate the Euclidean distance between two 2D points.
         """
@@ -74,3 +65,10 @@ class CalibrationService:
         x2, y2 = point2
         distance = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
         return distance
+    
+    @staticmethod
+    def __convert_xy_to_tuple_list(xy_list: list[XY]):
+        tuple_list = []
+        for xy in xy_list:
+            tuple_list.append((xy['x'], xy['y']))
+        return tuple_list

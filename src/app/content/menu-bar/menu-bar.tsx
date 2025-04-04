@@ -38,7 +38,7 @@ export default function MenuBar() {
 
     function hitEndpoint()
     {
-        ServiceProvider.backendService.sendAxios([new xy(1,1), new xy(1,1), new xy(1,1), new xy(1,1)]);
+        ServiceProvider.backendService.sendAxios([new xy(400,421), new xy(500,433), new xy(400,650), new xy(511,666)]);
         //ServiceProvider.backendService.sendTest();
     }
 

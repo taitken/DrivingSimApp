@@ -21,7 +21,10 @@ export class BackendService {
         'Access-Control-Allow-Credentials':false
       },
       data: {
-        calibration_points: calibrationPoints,
+        calibrationPoints: calibrationPoints,
+        realWorldPoints: [new xy(0,0), new xy(100,0), new xy(0,200), new xy(100,200)],
+        videoFileName: 'video_001.mvk',
+        testPoints: [new xy(0,0), new xy(100,0)],
       }
     });
   }

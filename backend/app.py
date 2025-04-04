@@ -1,11 +1,13 @@
-import dotenv
+import os
 from flask import Flask
 from flask_cors import CORS
 from endpoints.endpoints import endpoint_blueprint
 
-dotenv.load_dotenv()
 app: Flask = Flask(__name__)
 CORS(app)
+
+os.environ["CALIBRATION_DATA_PATH"]  = "\\backend\\resources\calibration_data.npz"
+os.environ["OUTPUT_PATH"] = "\\backend\\resources"
 
 app.register_blueprint(endpoint_blueprint, url_prefix='/backend')
 
