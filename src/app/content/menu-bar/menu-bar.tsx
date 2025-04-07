@@ -9,7 +9,8 @@ import { StateTrigger } from "../../../services/state.service";
 import { MenuStep } from "../../../models/enums/menu-steps.enum";
 
 export default function MenuBar() {
-    const [currentMenuStep, sesMenuStep] = useState(MenuStep.UPLOAD_VIDEO);
+    const [currentMenuStep, setMenuStep] = useState(MenuStep.UPLOAD_VIDEO);
+    const [returnValue, setReturnValue] = useState('Waiting for API');
     const [selectedPoints, setSelectedPoints] = useState([new xy(0, 0), new xy(0, 0), new xy(0, 0), new xy(0, 0)]);
 
     useEffect(() => {
@@ -17,7 +18,7 @@ export default function MenuBar() {
             setSelectedPoints(newSelectedPoints)
         });
         ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.MENU_STEP, (newMenuStep: MenuStep) => {
-            sesMenuStep(newMenuStep)
+            setMenuStep(newMenuStep)
         });
     });
 
@@ -38,14 +39,24 @@ export default function MenuBar() {
 
     function calibrateData()
     {
-        ServiceProvider.backendService.calibrate([new xy(400,421), new xy(500,433), new xy(400,650), new xy(511,666)]);
-        //ServiceProvider.backendService.sendTest();
+        ServiceProvider.backendService.calibrate([new xy(400,421), new xy(500,433), new xy(400,650), new xy(511,666)]).then((response) =>{
+            console.log(response)
+            setReturnValue(response.data);
+        });
     }
 
     function processVideo()
     {
-        ServiceProvider.backendService.processVideo();
-        //ServiceProvider.backendService.sendTest();
+        ServiceProvider.backendService.processVideo().then((response) =>{
+            setReturnValue(response.data);
+        })
+    }
+
+    function calcDistance()
+    {
+        ServiceProvider.backendService.calcDistance().then((response) =>{
+            setReturnValue(response.data);
+        })
     }
 
     function resetToStart() {
@@ -100,7 +111,9 @@ export default function MenuBar() {
             </div>
 
             <div className="divider"></div>
-            <UiButton onClick={processVideo}>Next</UiButton>
+            <UiButton onClick={processVideo}>Process Video</UiButton>
+            <UiButton onClick={calcDistance}>Check Distance</UiButton>
+            <div>{returnValue}</div>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse, ResponseType } from "axios";
 import { xy } from "../models/xy.model";
 
 export class BackendService {
@@ -12,8 +12,27 @@ export class BackendService {
     });
   }
 
-  async calibrate(calibrationPoints: xy[]) {
-    axios({
+  async calcDistance(): Promise<AxiosResponse<string>> {
+    return axios({
+      method: 'get',
+      url: this.BASE_URL + "calc-distance",
+      params: {
+        firstX: 0,
+        firstY: 0,
+        secondX: 100,
+        secondY: 100,
+        homographyMatrixFile: "C:\\Users\\tyler\\Documents\\Repos\\electron-driving-app\\backend\\resources\\video_001_homography_matrix.json"
+      },
+      data: {},
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Credentials':false
+      },
+    });
+  }
+
+  async calibrate(calibrationPoints: xy[]): Promise<AxiosResponse<string>> {
+    return axios({
       method: 'post',
       url: this.BASE_URL + "calibrate",
       headers: {
@@ -29,8 +48,8 @@ export class BackendService {
     });
   }
 
-  async processVideo() {
-    axios({
+  async processVideo() : Promise<AxiosResponse<string>> {
+    return axios({
       method: 'post',
       url: this.BASE_URL + "process-video",
       headers: {
@@ -43,7 +62,6 @@ export class BackendService {
         cropTopLeft: new xy(360,0),
         cropBottomRight: new xy(720, 640),
         wheelPosition: new xy(396, 333)
-        // 720, 1280
       }
     });
   }

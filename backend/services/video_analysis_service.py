@@ -21,7 +21,7 @@ class VideoAnalysisService:
         utc_decimal_start = UtilityService.utc_to_decimal(utc_start_time)
 
         # Load the homography matrix from the JSON file
-        self.homography_matrix = self.__load_homography_matrix(homography_matrix_file)
+        self.homography_matrix = UtilityService.load_homography_matrix(homography_matrix_file)
         
         # Load calibration data
         calibration_data = np.load(self.CALIBRATION_FILE_PATH)
@@ -42,7 +42,7 @@ class VideoAnalysisService:
         frame_height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT) // 2)
 
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        video_writer = cv2.VideoWriter(self.OUTPUT_PATH, fourcc, fps, (frame_width, frame_height))
+        video_writer = cv2.VideoWriter(UtilityService.RESOURCE_PATH, fourcc, fps, (frame_width, frame_height))
 
         with open(self.CSV_OUTPUT_PATH, 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
@@ -174,17 +174,6 @@ class VideoAnalysisService:
                     filtered_lines.append((x1, y1, x2, y2))
         
         return filtered_lines
-
-    # Function to load the homography matrix from the JSON file
-    @staticmethod
-    def __load_homography_matrix(file_path: str):
-        """
-        Retrieves the selected homography matrix file
-        """
-        with open(file_path, 'r') as f:
-            data = json.load(f)
-        print(f"Loaded homography matrix from {file_path}")
-        return np.array(data['homography_matrix'], dtype=np.float32)
 
     @staticmethod
     def __is_lane_line(line, slope_range=(0.05, 0.3)):

@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import os
 import re
 import numpy as np
@@ -33,7 +34,7 @@ class UtilityService:
 
     # Function to map a pixel point to real-world coordinates
     @staticmethod
-    def pixel_to_real_world(pixel_point: XY, homography_matrix):
+    def pixel_to_real_world(pixel_point: tuple[int, int], homography_matrix):
         """
         Maps a pixel point to real-world coordinates using the homography matrix.
         """
@@ -65,10 +66,28 @@ class UtilityService:
         return distance
     
     @staticmethod
-    def convert_xy_to_tuple_list(xy_list: list[XY]):
+    def convert_xy_dict_to_tuple_list(xy_list: list[XY]):
         tuple_list = []
         for xy in xy_list:
             tuple_list.append((xy['x'], xy['y']))
         return tuple_list
+    
+    @staticmethod
+    def convert_xy_to_tuple_list(xy_list: list[XY]):
+        tuple_list = []
+        for xy in xy_list:
+            tuple_list.append((xy.x, xy.y))
+        return tuple_list
+    
+    
+    # Function to load the homography matrix from the JSON file
+    @staticmethod
+    def load_homography_matrix(file_path: str):
+        """
+        Retrieves the selected homography matrix file
+        """
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+        return np.array(data['homography_matrix'], dtype=np.float32)
 
 

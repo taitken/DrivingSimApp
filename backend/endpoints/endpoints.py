@@ -12,19 +12,33 @@ def Hello():
     return "Hello my name is Tilla"
 
 @endpoint_blueprint.route('/calibrate', methods=['POST'])
-def Calibrate():
+def calibrate():
     # Handle request objects
     request_data = request.get_json()
     calibration_points: List[XY] = request_data['calibrationPoints']
     real_world_points: List[XY] = request_data['realWorldPoints']
-    test_points: List[XY] = request_data['testPoints']
     video_file_name: str = request_data['videoFileName']
 
     calibration_service = CalibrationService()
-    return calibration_service.perform_homography_mtx_calculation(calibration_points, real_world_points, test_points, video_file_name)
+    return calibration_service.perform_homography_mtx_calculation(calibration_points, real_world_points, video_file_name)
+
+@endpoint_blueprint.route('/calc-distance', methods=['GET'])
+def calc_distance():
+    # Handle request objects
+    firstX: int = request.args.get('firstX')
+    firstY: int = request.args.get('firstY')
+    secondX: int = request.args.get('secondX')
+    secondY: int = request.args.get('secondY')
+    homography_matrix_file: str = request.args.get('homographyMatrixFile')
+    real_world_poitns = []
+    real_world_poitns.append(XY(firstX, firstY))
+    real_world_poitns.append(XY(secondX, secondY))
+ 
+    calibration_service = CalibrationService()
+    return calibration_service.check_distance_between_two_real_world_points(homography_matrix_file, real_world_poitns)
 
 @endpoint_blueprint.route('/process-video', methods=['POST'])
-def ProcessVideo():
+def process_video():
     # Handle request objects
     request_data = request.get_json()
     video_file: str = request_data['videoFile']
