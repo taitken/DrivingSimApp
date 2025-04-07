@@ -12,10 +12,10 @@ export class BackendService {
     });
   }
 
-  async sendAxios(calibrationPoints: xy[]) {
+  async calibrate(calibrationPoints: xy[]) {
     axios({
       method: 'post',
-      url: this.BASE_URL + "vidya",
+      url: this.BASE_URL + "calibrate",
       headers: {
         "Access-Control-Allow-Origin": "*",
         'Access-Control-Allow-Credentials':false
@@ -25,6 +25,25 @@ export class BackendService {
         realWorldPoints: [new xy(0,0), new xy(100,0), new xy(0,200), new xy(100,200)],
         videoFileName: 'video_001.mvk',
         testPoints: [new xy(0,0), new xy(100,0)],
+      }
+    });
+  }
+
+  async processVideo() {
+    axios({
+      method: 'post',
+      url: this.BASE_URL + "process-video",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Credentials':false
+      },
+      data: {
+        videoFile: "C:\\Users\\tyler\\Documents\\Repos\\DrivingSimApp\\OriginalFiles\\video\\CANTRACK_01_006_V1_D1_2025-03-04 10-51-08.mkv",
+        homographyMatrixFile: "C:\\Users\\tyler\\Documents\\Repos\\electron-driving-app\\backend\\resources\\video_001_homography_matrix.json",
+        cropTopLeft: new xy(360,0),
+        cropBottomRight: new xy(720, 640),
+        wheelPosition: new xy(396, 333)
+        // 720, 1280
       }
     });
   }

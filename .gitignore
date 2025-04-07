@@ -93,3 +93,6 @@ out/
 backend/build/
 backend/dist/
 backend/app/
+
+# pycache
+**/__pycache__/

@@ -36,9 +36,15 @@ export default function MenuBar() {
         return "";
     }
 
-    function hitEndpoint()
+    function calibrateData()
     {
-        ServiceProvider.backendService.sendAxios([new xy(400,421), new xy(500,433), new xy(400,650), new xy(511,666)]);
+        ServiceProvider.backendService.calibrate([new xy(400,421), new xy(500,433), new xy(400,650), new xy(511,666)]);
+        //ServiceProvider.backendService.sendTest();
+    }
+
+    function processVideo()
+    {
+        ServiceProvider.backendService.processVideo();
         //ServiceProvider.backendService.sendTest();
     }
 
@@ -89,12 +95,12 @@ export default function MenuBar() {
             </div>
 
             <div className="d-flex justify-content-center">
-                <div className="me-1"><UiButton onClick={hitEndpoint}>Confirm points</UiButton></div>
+                <div className="me-1"><UiButton onClick={calibrateData}>Confirm points</UiButton></div>
                 <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
             </div>
 
             <div className="divider"></div>
-            <UiButton>Next</UiButton>
+            <UiButton onClick={processVideo}>Next</UiButton>
         </div>
     )
 }

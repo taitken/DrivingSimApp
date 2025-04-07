@@ -8,17 +8,15 @@
     "strict": false,
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
-    //"noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "paths": {
-      "*": ["node_modules/*"]
-    }
+      "*": ["node_modules/*"],
+    },
+    "baseUrl": ".",
   },
-  //"include": ["./src/index.d.ts"]
   "include": ["**/*"]
 }
