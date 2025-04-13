@@ -96,3 +96,6 @@ backend/app/
 
 # pycache
 **/__pycache__/
+resources/homography_matrices/
+resources/output/
+resources/tmp/

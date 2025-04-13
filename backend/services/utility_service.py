@@ -2,12 +2,16 @@ from datetime import datetime
 import json
 import os
 import re
+from tkinter import filedialog 
+import tkinter
 import numpy as np
 import pytz
 from models.xy import XY
 
 class UtilityService:
-    RESOURCE_PATH = os.getcwd() + '\\backend\\resources'
+    RESOURCE_PATH = os.getcwd() + '\\resources'
+    HOMOGRAPHY_OUTPUT_FOLDER = RESOURCE_PATH + '\\homography_matrices'
+    OUTPUT_FOLDER = RESOURCE_PATH + '\\output'
     
     @staticmethod
     def extract_aest_from_filename(filename):
@@ -89,5 +93,12 @@ class UtilityService:
         with open(file_path, 'r') as f:
             data = json.load(f)
         return np.array(data['homography_matrix'], dtype=np.float32)
+    
+    # Load video
+    def select_video_file():
+        root = tkinter.Tk()
+        root.withdraw()  # Hide the main window
+        file_path = filedialog.askopenfilename(title="Select a Video File", filetypes=[("All Files", "*.*")])
+        return file_path
 
 

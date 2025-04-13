@@ -1,3 +1,6 @@
+import { KeyCallback } from "../models/key-callback";
+import { Subscription } from "../models/subscription";
+
 export enum StateTrigger {
     MENU_STEP,
     VIDEO_FILE_SECLECTED,
@@ -11,15 +14,17 @@ export class StateService {
     }
 
     private eventSubscribers: KeyCallback[] = [];
-    private currentStates: {[key: number]: any} = {};
+    private currentStates: { [key: number]: any } = {};
 
-    public subscribeToStateTrigger(key: StateTrigger, subscriber: (newState: any)=> void ) {
-        this.eventSubscribers.push({ key, stateCallback: subscriber });
+    public subscribeToStateTrigger(key: StateTrigger,  subscriber: (newState: any) => void): Subscription {
+        this.eventSubscribers.push({ key: key, stateCallback: subscriber });
+        return new Subscription(subscriber, this.eventSubscribers)
     }
 
-    public subscribeImmediatelyToStateTrigger(key: StateTrigger, subscriber: (newState: any)=> void ) {
-        this.subscribeToStateTrigger(key, subscriber);
+    public subscribeImmediatelyToStateTrigger(key: StateTrigger, subscriber: (newState: any) => void): Subscription {
+        let sub = this.subscribeToStateTrigger(key , subscriber);
         subscriber(this.currentStates[key]);
+        return sub;
     }
 
     public updateState(key: StateTrigger, newState: any) {
@@ -29,14 +34,4 @@ export class StateService {
                 keyCallback.stateCallback(newState);
         });
     }
-}
-
-interface KeyCallback {
-    key: StateTrigger,
-    stateCallback: (newState: any)=> void
-}
-
-interface KeyCurrentState {
-    key: StateTrigger,
-    currentState: any;
 }

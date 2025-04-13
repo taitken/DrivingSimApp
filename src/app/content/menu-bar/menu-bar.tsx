@@ -11,15 +11,24 @@ import { MenuStep } from "../../../models/enums/menu-steps.enum";
 export default function MenuBar() {
     const [currentMenuStep, setMenuStep] = useState(MenuStep.UPLOAD_VIDEO);
     const [returnValue, setReturnValue] = useState('Waiting for API');
+    const [videoFile, setVideoFile] = useState(null);
     const [selectedPoints, setSelectedPoints] = useState([new xy(0, 0), new xy(0, 0), new xy(0, 0), new xy(0, 0)]);
 
     useEffect(() => {
-        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.CALIBRATION_POINTS, (newSelectedPoints) => {
+        let sub1 = ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.CALIBRATION_POINTS, (newSelectedPoints) => {
             setSelectedPoints(newSelectedPoints)
         });
-        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.MENU_STEP, (newMenuStep: MenuStep) => {
+        let sub2 = ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.MENU_STEP, (newMenuStep: MenuStep) => {
             setMenuStep(newMenuStep)
         });
+        let sub3 = ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.VIDEO_FILE_SECLECTED, (file) => {
+            setVideoFile(file)
+        });
+        return () => {
+            sub1.unsubscribe();
+            sub2.unsubscribe();
+            sub3.unsubscribe();
+        }
     });
 
     function getSelectedPointCoorString(points: xy) {
@@ -37,26 +46,32 @@ export default function MenuBar() {
         return "";
     }
 
-    function calibrateData()
-    {
-        ServiceProvider.backendService.calibrate([new xy(400,421), new xy(500,433), new xy(400,650), new xy(511,666)]).then((response) =>{
-            console.log(response)
-            setReturnValue(response.data);
-        });
+    function calibrateData() {
+        if (selectedPoints.length == 4
+            && (
+                selectedPoints[0].x != 0 && selectedPoints[0].y != 0 &&
+                selectedPoints[1].x != 0 && selectedPoints[1].y != 0 &&
+                selectedPoints[2].x != 0 && selectedPoints[2].y != 0 &&
+                selectedPoints[3].x != 0 && selectedPoints[3].y != 0
+            )
+        ) {
+            ServiceProvider.backendService.calibrate(videoFile, selectedPoints).then((response) => {
+                setReturnValue(response.data);
+            });
+        }
     }
 
-    function processVideo()
-    {
-        ServiceProvider.backendService.processVideo().then((response) =>{
+    function calcDistance() {
+        ServiceProvider.backendService.calcDistance().then((response) => {
             setReturnValue(response.data);
         })
-    }
-
-    function calcDistance()
-    {
-        ServiceProvider.backendService.calcDistance().then((response) =>{
-            setReturnValue(response.data);
-        })
+        console.log(videoFile)
+        window["ipcRenderer"].invokeSaveVideoFile(videoFile)
+            .then((result: string[]) => {
+            })
+            .catch((e) => {
+                console.log(e);
+            })
     }
 
     function resetToStart() {
@@ -111,7 +126,6 @@ export default function MenuBar() {
             </div>
 
             <div className="divider"></div>
-            <UiButton onClick={processVideo}>Process Video</UiButton>
             <UiButton onClick={calcDistance}>Check Distance</UiButton>
             <div>{returnValue}</div>
         </div>

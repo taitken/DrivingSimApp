@@ -1,0 +1,40 @@
+
+table.default-table-style {
+  width: 100%;
+  font-size: 14px;
+  box-shadow: 2px 2px 2px 0px #efefef;
+}
+
+.default-table-style tbody {
+
+}
+
+.default-table-style thead {
+}
+
+.default-table-style tr {
+  border: 1px rgb(230, 230, 230) solid;
+  transition: .2s all;
+  background-color: white;
+}
+
+.default-table-style tr:hover {
+  background-color: rgb(251, 254, 255);  
+  cursor: pointer;
+}
+
+.default-table-style td, .default-table-style th{
+  padding: .5em 1em ;
+}
+
+.default-table-style th{
+  background-color: rgb(248, 253, 255);  
+}
+
+.default-table-style td {
+
+  }
+
+.default-table-style td.selected-row{
+  background-color: rgb(228, 248, 255);  
+}

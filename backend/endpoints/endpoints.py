@@ -41,11 +41,10 @@ def calc_distance():
 def process_video():
     # Handle request objects
     request_data = request.get_json()
-    video_file: str = request_data['videoFile']
     homography_matrix_file: str = request_data['homographyMatrixFile']
     crop_top_left: XY = XY.from_dict(request_data['cropTopLeft'])
     crop_bottom_right: XY = XY.from_dict(request_data['cropBottomRight'])
     wheel_position: XY = XY.from_dict(request_data['wheelPosition'])
 
     video_analysis_service = VideoAnalysisService()
-    return video_analysis_service.analyse_video(video_file, homography_matrix_file, 'CANTRACK_01_006_V1_D1_2025-03-04 10-51-08', crop_top_left, crop_bottom_right, wheel_position)
+    return video_analysis_service.analyse_video(homography_matrix_file, 'CANTRACK_01_006_V1_D1_2025-03-04 10-51-08', crop_top_left, crop_bottom_right, wheel_position)

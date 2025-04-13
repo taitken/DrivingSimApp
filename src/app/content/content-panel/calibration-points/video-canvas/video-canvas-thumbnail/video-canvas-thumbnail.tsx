@@ -22,11 +22,14 @@ export function VideoCanvasThumbnail({ image, xy, width, height, sx, sy, sw, sh 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        stateService.subscribeToStateTrigger(StateTrigger.VIDEO_SECTION_SELECTED, (selectedXy) => {
+        let sub = stateService.subscribeToStateTrigger(StateTrigger.VIDEO_SECTION_SELECTED, (selectedXy) => {
             setSelected(!selected && selectedXy == xy);
         });
         let canvasCtx = canvasRef?.current?.getContext('2d');
         canvasCtx?.drawImage(image, sx, sy, sw, sh, 0, 0, width, height);
+        return ()=> {
+            sub.unsubscribe();
+        }
     });
 
     function onclick() {

@@ -29,16 +29,21 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             else thumbnailContainerRef.current.scrollLeft -= 5;
         });
 
-        ServiceProvider.stateService.subscribeImmediatelyToStateTrigger(StateTrigger.VIDEO_FILE_SECLECTED, (newVideoFile => {
+        let sub1 = ServiceProvider.stateService.subscribeImmediatelyToStateTrigger( StateTrigger.VIDEO_FILE_SECLECTED, (newVideoFile => {
             onVideoDrop(newVideoFile);
         }));
-        ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.VIDEO_SECTION_SELECTED, (newVideoSectionXY => {
+        let sub2 = ServiceProvider.stateService.subscribeToStateTrigger( StateTrigger.VIDEO_SECTION_SELECTED, (newVideoSectionXY => {
             selectVideoSection(selectedSection == newVideoSectionXY ? new xy(0, 0) : newVideoSectionXY)
         }));
+        return ()=>{
+            sub1.unsubscribe();
+            sub2.unsubscribe();
+        }
     }, []);
 
     useEffect(() => {
         onSeekedVideo();
+
     }, [rowCols])
 
     function onVideoDrop(selectedFile: File) {
@@ -161,7 +166,6 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
         }
         setThumbnails(newThumbnails);
     }
-
 
     return (
         <>

@@ -15,6 +15,17 @@ export const mainConfig: Configuration = {
   },
   plugins,
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
+    fallback: {
+      fs: false,
+      tls: false,
+      net: false,
+      path: false,
+      zlib: false,
+      http: false,
+      https: false,
+      stream: false,
+      crypto: false,
+    },
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
 };

@@ -22,7 +22,7 @@ class CalibrationService:
         real_world_points = UtilityService.convert_xy_dict_to_tuple_list(_real_world_points)
         # Call the function to input points, Compute the homography matrix, Save the homography matrix to a JSON file
         H, _ = cv2.findHomography(np.array(calibration_points, dtype=np.float32), np.array(real_world_points, dtype=np.float32))
-        file_name = os.path.join(UtilityService.RESOURCE_PATH, f'{os.path.splitext(video_file_name)[0]}_homography_matrix.json')
+        file_name = os.path.join(UtilityService.HOMOGRAPHY_OUTPUT_FOLDER, f'{os.path.splitext(video_file_name)[0]}_homography_matrix.json')
         self.__save_homography_matrix(file_name, H.tolist())
 
         return f"File saved: {file_name}"

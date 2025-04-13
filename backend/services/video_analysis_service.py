@@ -1,18 +1,17 @@
 import csv
-import json
 import cv2
 import numpy as np
 from services.utility_service import UtilityService
 from models.xy import XY
 
 class VideoAnalysisService:
-    CSV_OUTPUT_PATH = UtilityService.RESOURCE_PATH + '\\test_output.csv'
+    CSV_OUTPUT_PATH = UtilityService.OUTPUT_FOLDER + '\\test_output.csv'
     CALIBRATION_FILE_PATH = UtilityService.RESOURCE_PATH + '\\calibration_data.npz'
     homography_matrix = None
     camera_matrix = None
     dist_coeffs = None
 
-    def analyse_video(self, _video_file: str, homography_matrix_file: str, base_name: str, crop_top_left: XY, crop_bottom_right: XY, wheel_position: XY):
+    def analyse_video(self, homography_matrix_file: str, base_name: str, crop_top_left: XY, crop_bottom_right: XY, wheel_position: XY):
         """
         Creates a homography matrix, and maps two given test points
         """
@@ -21,14 +20,14 @@ class VideoAnalysisService:
         utc_decimal_start = UtilityService.utc_to_decimal(utc_start_time)
 
         # Load the homography matrix from the JSON file
-        self.homography_matrix = UtilityService.load_homography_matrix(homography_matrix_file)
+        self.homography_matrix = UtilityService.load_homography_matrix(UtilityService.HOMOGRAPHY_OUTPUT_FOLDER + "/" + homography_matrix_file)
         
         # Load calibration data
         calibration_data = np.load(self.CALIBRATION_FILE_PATH)
         self.camera_matrix = calibration_data['camera_matrix']
         self.dist_coeffs = calibration_data['dist_coeffs']
-        
-        video_capture = cv2.VideoCapture(_video_file)
+        video_input_path = UtilityService.select_video_file()
+        video_capture = cv2.VideoCapture(video_input_path)
 
         if not video_capture.isOpened():
             print("Error: Video file could not be opened.")
