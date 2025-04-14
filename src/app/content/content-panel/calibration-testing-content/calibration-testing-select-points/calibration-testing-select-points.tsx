@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
-import { SelectVideoBox } from "../../../../shared-components/select-video-box/select-video-box";
+import { ServiceProvider } from "../../../../../services/service-provider.service";
+import { VideoCanvasContainer } from "../../../../shared-components/video-canvas-container/video-canvas-container";
 
 
-export function CalibrationTestingVideoPick() {
-
-    function onSelectVideo(file: File) {
-        
-    }
+export function CalibrationTestingSelectPoints() {
 
     return (
         <>
-            <SelectVideoBox videoSelectFunc={onSelectVideo}></SelectVideoBox>
+            <VideoCanvasContainer eventEmitterService={ServiceProvider.calibrationTestingService} numberSelectedPoints={2}></VideoCanvasContainer>
         </>
     )
 }

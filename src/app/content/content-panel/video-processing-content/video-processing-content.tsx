@@ -3,7 +3,7 @@ import { ServiceProvider } from '../../../../services/service-provider.service';
 import { UiButton } from '../../../ui/ui-button/ui-button';
 import { CalibrationFilePicker } from '../../../shared-components/calibration-file-picker/calibration-file-picker';
 
-export function VideoProcessing() {
+export function VideoProcessingContent() {
     const [selectedRow, setSelectedRow] = useState(null);
 
     function selectHomopgrayFile(rowData: any) {
@@ -22,7 +22,6 @@ export function VideoProcessing() {
     return (
         <>
             <CalibrationFilePicker onSelectFile={selectHomopgrayFile}></CalibrationFilePicker>
-            <UiButton onClick={processVideo}>Process Video</UiButton>
         </>
     )
 }

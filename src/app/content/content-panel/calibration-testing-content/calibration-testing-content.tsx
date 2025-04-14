@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { ServiceProvider } from "../../../../services/service-provider.service";
 import { CalibrationTestingSteps } from "../../../../services/calibration-testing.service";
-import { SelectVideoBox } from "../../../shared-components/select-video-box/select-video-box";
 import { CalibrationTestingFilePicker } from "./calibration-testing-file-picker/calibration-testing-file-picker";
 import { CalibrationTestingVideoPicker } from "./calibration-testing-video-picker/calibration-testing-video-picker";
+import { CalibrationTestingSelectPoints } from "./calibration-testing-select-points/calibration-testing-select-points";
 
 
 export function CalibrationTestingContent() {
@@ -23,6 +23,7 @@ export function CalibrationTestingContent() {
         <>
             {selectedStep == CalibrationTestingSteps.PICK_CALIBRATION_FILE && <CalibrationTestingFilePicker></CalibrationTestingFilePicker>}
             {selectedStep == CalibrationTestingSteps.PICK_VIDEO && <CalibrationTestingVideoPicker ></CalibrationTestingVideoPicker>}
+            {selectedStep == CalibrationTestingSteps.SELECT_TWO_POINTS && <CalibrationTestingSelectPoints ></CalibrationTestingSelectPoints>}
         </>
     )
 }

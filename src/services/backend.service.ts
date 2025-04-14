@@ -16,16 +16,16 @@ export class BackendService {
     });
   }
 
-  async calcDistance(): Promise<AxiosResponse<string>> {
+  async calcDistance(homographyFile: string, selectedPoints: XY[]): Promise<AxiosResponse<string>> {
     return axios({
       method: 'get',
       url: this.BASE_URL + "calc-distance",
       params: {
-        firstX: 0,
-        firstY: 0,
-        secondX: 100,
-        secondY: 100,
-        homographyMatrixFile: "C:\\Users\\tyler\\Documents\\Repos\\electron-driving-app\\resources\\homography_matrices\\video_001_homography_matrix.json"
+        firstX: selectedPoints[0].x,
+        firstY: selectedPoints[0].y,
+        secondX: selectedPoints[1].x,
+        secondY: selectedPoints[1].y,
+        homographyMatrixFile: homographyFile
       },
       data: {},
       headers: this.AXIOS_HEADERS,

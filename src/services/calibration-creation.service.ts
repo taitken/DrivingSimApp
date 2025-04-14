@@ -10,4 +10,12 @@ export enum CalibrationCreationSteps {
 
 export class CalibrationCreationService extends BaseContentService {
     public stepEmitter: EventEmitter<CalibrationCreationSteps> = new EventEmitter<CalibrationCreationSteps>(CalibrationCreationSteps.UPLOAD_VIDEO);
+    
+    public resetEmitters()
+    {
+      this.videoFileEmitter.update(null);
+      this.videoSectionEmitter.update(null);
+      this.selectedCanvasPointsEmitter.update(null);
+      this.stepEmitter.update(CalibrationCreationSteps.UPLOAD_VIDEO);
+    }
 }

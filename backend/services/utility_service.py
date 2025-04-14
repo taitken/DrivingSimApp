@@ -90,7 +90,7 @@ class UtilityService:
         """
         Retrieves the selected homography matrix file
         """
-        with open(file_path, 'r') as f:
+        with open(UtilityService.HOMOGRAPHY_OUTPUT_FOLDER + "\\" + file_path, 'r') as f:
             data = json.load(f)
         return np.array(data['homography_matrix'], dtype=np.float32)
     

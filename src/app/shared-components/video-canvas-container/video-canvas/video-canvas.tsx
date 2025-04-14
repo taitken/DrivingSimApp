@@ -6,10 +6,11 @@ import { BaseContentService } from "../../../../services/base-content.service";
 
 interface UiButtonInterface {
     rowCols: XY,
-    eventEmitterService: BaseContentService
+    eventEmitterService: BaseContentService,
+    numberSelectedPoints: number
 }
 
-export function VideoCanvas({ rowCols, eventEmitterService }: UiButtonInterface) {
+export function VideoCanvas({ rowCols, eventEmitterService, numberSelectedPoints }: UiButtonInterface) {
     const calibrationCanvas = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const thumbnailContainerRef = useRef<HTMLDivElement>(null);
@@ -104,7 +105,7 @@ export function VideoCanvas({ rowCols, eventEmitterService }: UiButtonInterface)
     function selectCanvasDot(event) {
         if (selectedSection &&
             !(selectedSection.x == 0 && selectedSection.y == 0)
-            && selectedPoints.length < 4) {
+            && selectedPoints.length < numberSelectedPoints) {
             let ctx = calibrationCanvas.current.getContext('2d');
             let rect = calibrationCanvas.current.getBoundingClientRect();
             ctx.fillStyle = "red";
@@ -112,7 +113,7 @@ export function VideoCanvas({ rowCols, eventEmitterService }: UiButtonInterface)
             selectedPoints.push(new XY(event.clientX - rect.left, event.clientY - rect.top))
 
 
-            if (selectedPoints.length == 4) {
+            if (selectedPoints.length == numberSelectedPoints && numberSelectedPoints > 1) {
                 selectedPoints.sort((a, b) => {
                     if (a.x == b.x) return a.y - b.y;
                     return a.x - b.x;
@@ -129,9 +130,9 @@ export function VideoCanvas({ rowCols, eventEmitterService }: UiButtonInterface)
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(orderedPoints[0].x, orderedPoints[0].y);
-                ctx.lineTo(orderedPoints[1].x, orderedPoints[1].y);
-                ctx.lineTo(orderedPoints[2].x, orderedPoints[2].y);
-                ctx.lineTo(orderedPoints[3].x, orderedPoints[3].y);
+                for (let i = 1; i < numberSelectedPoints; i++) {
+                    ctx.lineTo(orderedPoints[i].x, orderedPoints[i].y);
+                }
                 ctx.lineTo(orderedPoints[0].x, orderedPoints[0].y);
                 ctx.stroke();
                 eventEmitterService.selectedCanvasPointsEmitter.update(selectedPoints);
@@ -163,7 +164,8 @@ export function VideoCanvas({ rowCols, eventEmitterService }: UiButtonInterface)
                             sx={frameWidth * (x - 1)}
                             sy={frameHeight * (y - 1)}
                             sw={frameWidth}
-                            sh={frameHeight}></VideoCanvasThumbnail>
+                            sh={frameHeight}
+                            eventEmitterService={eventEmitterService}></VideoCanvasThumbnail>
                     </div>
                 )
             }

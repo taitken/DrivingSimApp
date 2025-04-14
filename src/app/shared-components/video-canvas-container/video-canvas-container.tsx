@@ -3,7 +3,7 @@ import { VideoCanvas } from "./video-canvas/video-canvas";
 import { XY } from "../../../models/xy.model";
 import { BaseContentService } from "../../../services/base-content.service";
 
-export function VideoCanvasContainer({eventEmitterService} : {eventEmitterService: BaseContentService}) {
+export function VideoCanvasContainer({eventEmitterService, numberSelectedPoints} : {eventEmitterService: BaseContentService, numberSelectedPoints: number}) {
     const [rowCols, setRowCols] = useState(new XY(2, 2));
 
     return (
@@ -16,7 +16,7 @@ export function VideoCanvasContainer({eventEmitterService} : {eventEmitterServic
                     Rows: <input name="myInput" value={rowCols.y} onChange={(e) => { setRowCols(new XY(rowCols.x, +e.target.value)) }} />
                 </label>
             </div>
-            <VideoCanvas eventEmitterService={eventEmitterService} rowCols={rowCols}></VideoCanvas>
+            <VideoCanvas eventEmitterService={eventEmitterService} rowCols={rowCols} numberSelectedPoints={numberSelectedPoints}></VideoCanvas>
         </>
     )
 }
