@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { StateTrigger } from "../../../../services/state.service";
 import { ServiceProvider } from "../../../../services/service-provider.service";
-import { MenuStep } from "../../../../models/enums/menu-steps.enum";
+import { CalibrationCreationSteps } from "../../../../services/calibration-creation.service";
 
 export function CalibrationVideo() {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -35,8 +34,8 @@ export function CalibrationVideo() {
     }
 
     function onVideoDrop(fileList: FileList) {
-        ServiceProvider.stateService.updateState(StateTrigger.VIDEO_FILE_SECLECTED, fileList[0]);
-        ServiceProvider.stateService.updateState(StateTrigger.MENU_STEP, MenuStep.SELECT_POINTS);
+        ServiceProvider.calibrationCreationService.videoFileEmitter.update(fileList[0]);
+        ServiceProvider.calibrationCreationService.stepEmitter.update(CalibrationCreationSteps.SELECT_FOUR_POINTS);
     }
 
     return (

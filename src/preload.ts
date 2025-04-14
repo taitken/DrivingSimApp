@@ -11,9 +11,6 @@ contextBridge.exposeInMainWorld('myAPI', {
 contextBridge.exposeInMainWorld("ipcRenderer", {
     invokeCopyFile: async () =>
         await ipcRenderer.invoke("copy_file_to_tmp"),
-});
-
-contextBridge.exposeInMainWorld("ipcRenderer", {
     invokeGetFileList: async (relativePath: string, fileTypes: string[]) =>
         await ipcRenderer.invoke("get_file_list", relativePath, fileTypes),
 });

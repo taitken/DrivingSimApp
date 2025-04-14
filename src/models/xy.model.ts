@@ -1,4 +1,4 @@
-export class xy {
+export class XY {
     constructor(_x: number, _y: number) {
         this.x = _x;
         this.y = _y;

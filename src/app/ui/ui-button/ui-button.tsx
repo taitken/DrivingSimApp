@@ -1,11 +1,18 @@
 import { useEffect } from 'react';
 import './ui-button.css';
 
-export function UiButton({ children, onClick }: { children: any , onClick?: (...args:[]) => void}) {
+interface UiButtonInterface {
+    children: any,
+    style?: 'default' | 'accent',
+    disabled?: boolean,
+    onClick?: (...args: []) => void
+}
+
+export function UiButton({ children, style = 'default', disabled = false, onClick }: UiButtonInterface) {
 
     return (
         <>
-            <div className="button-style" onClick={onClick}>{children}</div>
+            <button disabled={disabled} className={"button-style " + style} onClick={onClick}>{children}</button>
         </>
     )
 }   

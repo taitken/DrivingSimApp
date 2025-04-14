@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect } from "react";
-import { xy } from "../../../../../models/xy.model";
 import { ServiceProvider } from "../../../../../services/service-provider.service";
 import { StateTrigger } from "../../../../../services/state.service";
 import { VideoCanvasThumbnail } from "./video-canvas-thumbnail/video-canvas-thumbnail";
 import './video-canvas.css'
+import { XY } from "../../../../../models/xy.model";
 
 
-export function VideoCanvas({ rowCols }: { rowCols: xy }) {
+export function VideoCanvas({ rowCols }: { rowCols: XY }) {
     const calibrationCanvas = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const thumbnailContainerRef = useRef<HTMLDivElement>(null);
@@ -15,7 +15,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
     const scaleFactor: number = 5;
     let frameWidth: number;
     let frameHeight: number;
-    let selectedPoints: xy[] = [];
+    let selectedPoints: XY[] = [];
 
     window.onresize = function () {
         calibrationCanvas.current.style.width = '100%';
@@ -29,13 +29,13 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             else thumbnailContainerRef.current.scrollLeft -= 5;
         });
 
-        let sub1 = ServiceProvider.stateService.subscribeImmediatelyToStateTrigger( StateTrigger.VIDEO_FILE_SECLECTED, (newVideoFile => {
+        let sub1 = ServiceProvider.calibrationCreationService.videoFileEmitter.listenForUpdateAndExecuteImmediately((newVideoFile => {
             onVideoDrop(newVideoFile);
         }));
-        let sub2 = ServiceProvider.stateService.subscribeToStateTrigger( StateTrigger.VIDEO_SECTION_SELECTED, (newVideoSectionXY => {
-            selectVideoSection(selectedSection == newVideoSectionXY ? new xy(0, 0) : newVideoSectionXY)
+        let sub2 = ServiceProvider.calibrationCreationService.videoSectionEmitter.listenForUpdates((newVideoSectionXY => {
+            selectVideoSection(selectedSection == newVideoSectionXY ? new XY(0, 0) : newVideoSectionXY)
         }));
-        return ()=>{
+        return () => {
             sub1.unsubscribe();
             sub2.unsubscribe();
         }
@@ -70,7 +70,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
         if (true) {
             frameWidth = videoRef.current.videoWidth / rowCols.x;
             frameHeight = videoRef.current.videoHeight / rowCols.y;
-            selectVideoSection(new xy(0, 0));
+            selectVideoSection(new XY(0, 0));
             generateThumbnails();
         }
     }
@@ -93,7 +93,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
 
     function drawVideoOnCanvas(image: CanvasImageSource, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
         selectedPoints = [];
-        ServiceProvider.stateService.updateState(StateTrigger.CALIBRATION_POINTS, selectedPoints);
+        ServiceProvider.calibrationCreationService.calibrationPointsEmitter.update(selectedPoints);
         calibrationCanvas.current.getContext('2d').drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
@@ -105,7 +105,7 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
             let rect = calibrationCanvas.current.getBoundingClientRect();
             ctx.fillStyle = "red";
             ctx.fillRect(event.clientX - rect.left - 2, event.clientY - rect.top - 2, 5, 5)
-            selectedPoints.push(new xy(event.clientX - rect.left, event.clientY - rect.top))
+            selectedPoints.push(new XY(event.clientX - rect.left, event.clientY - rect.top))
 
 
             if (selectedPoints.length == 4) {
@@ -130,12 +130,12 @@ export function VideoCanvas({ rowCols }: { rowCols: xy }) {
                 ctx.lineTo(orderedPoints[3].x, orderedPoints[3].y);
                 ctx.lineTo(orderedPoints[0].x, orderedPoints[0].y);
                 ctx.stroke();
-                ServiceProvider.stateService.updateState(StateTrigger.CALIBRATION_POINTS, selectedPoints);
+                ServiceProvider.calibrationCreationService.calibrationPointsEmitter.update(selectedPoints);
             }
         }
     }
 
-    function selectVideoSection(xy: xy) {
+    function selectVideoSection(xy: XY) {
         setSelectedSection(xy);
         if (xy.x == 0 && xy.y == 0) {
             drawVideoOnCanvas(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight, 0, 0, videoRef.current.clientWidth, videoRef.current.clientHeight);

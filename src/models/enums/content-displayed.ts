@@ -1,0 +1,5 @@
+export enum ContentDisplayed{
+    CALIBRATION_CREATION,
+    CALIBRATION_TESTING,
+    VIDEO_PROCESSING
+}

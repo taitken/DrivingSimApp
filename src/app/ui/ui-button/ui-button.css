@@ -1,4 +1,4 @@
-.button-style{
+.button-style {
     background-color: #ffffff;
     border: none;
     font-size: 11px;
@@ -11,9 +11,19 @@
     text-align: center;
 }
 
-.button-style:hover{
+.button-style:hover {
     cursor: pointer;
     background-color: #f5f4f4;
     color: #333;
+}
+
+.button-style.accent {
+    background-color: #127be7;
+    color: white;
+}
+
+.button-style.accent:hover {
+    background-color: #47a3ff;
+    color: white;
 }
 

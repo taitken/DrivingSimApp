@@ -3,25 +3,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import './menu-bar.css';
 import { UiButton } from "../../ui/ui-button/ui-button";
 import { useEffect, useState } from "react";
-import { xy } from "../../../models/xy.model";
 import { ServiceProvider } from "../../../services/service-provider.service";
-import { StateTrigger } from "../../../services/state.service";
-import { MenuStep } from "../../../models/enums/menu-steps.enum";
+import { CalibrationCreationSteps } from "../../../services/calibration-creation.service";
+import { XY } from "../../../models/xy.model";
 
 export default function MenuBar() {
-    const [currentMenuStep, setMenuStep] = useState(MenuStep.UPLOAD_VIDEO);
+    const [currentMenuStep, setMenuStep] = useState(CalibrationCreationSteps.UPLOAD_VIDEO);
     const [returnValue, setReturnValue] = useState('Waiting for API');
     const [videoFile, setVideoFile] = useState(null);
-    const [selectedPoints, setSelectedPoints] = useState([new xy(0, 0), new xy(0, 0), new xy(0, 0), new xy(0, 0)]);
+    const [selectedPoints, setSelectedPoints] = useState([new XY(0, 0), new XY(0, 0), new XY(0, 0), new XY(0, 0)]);
 
     useEffect(() => {
-        let sub1 = ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.CALIBRATION_POINTS, (newSelectedPoints) => {
+        let sub1 = ServiceProvider.calibrationCreationService.calibrationPointsEmitter.listenForUpdates((newSelectedPoints) => {
             setSelectedPoints(newSelectedPoints)
         });
-        let sub2 = ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.MENU_STEP, (newMenuStep: MenuStep) => {
+        let sub2 = ServiceProvider.calibrationCreationService.stepEmitter.listenForUpdates((newMenuStep: CalibrationCreationSteps) => {
             setMenuStep(newMenuStep)
         });
-        let sub3 = ServiceProvider.stateService.subscribeToStateTrigger(StateTrigger.VIDEO_FILE_SECLECTED, (file) => {
+        let sub3 = ServiceProvider.calibrationCreationService.videoFileEmitter.listenForUpdates((file) => {
             setVideoFile(file)
         });
         return () => {
@@ -31,14 +30,14 @@ export default function MenuBar() {
         }
     });
 
-    function getSelectedPointCoorString(points: xy) {
+    function getSelectedPointCoorString(points: XY) {
         if (points == null)
             return "0, 0"
 
         return Math.round(points.x).toString() + ", " + Math.round(points.y).toString()
     }
 
-    function getMenuHightlight(thisMenuStep: MenuStep, selectedMenuStep: MenuStep): string {
+    function getMenuHightlight(thisMenuStep: CalibrationCreationSteps, selectedMenuStep: CalibrationCreationSteps): string {
         if (thisMenuStep == selectedMenuStep)
             return "menu-heading-selected";
         if (thisMenuStep < selectedMenuStep)
@@ -75,8 +74,8 @@ export default function MenuBar() {
     }
 
     function resetToStart() {
-        ServiceProvider.stateService.updateState(StateTrigger.MENU_STEP, MenuStep.UPLOAD_VIDEO)
-        ServiceProvider.stateService.updateState(StateTrigger.CALIBRATION_POINTS, []);
+        ServiceProvider.calibrationCreationService.stepEmitter.update(CalibrationCreationSteps.UPLOAD_VIDEO);
+        ServiceProvider.calibrationCreationService.calibrationPointsEmitter.update([]);
     }
 
     return (
@@ -86,11 +85,11 @@ export default function MenuBar() {
                 Camera Calibration
             </h1>
             <div className="divider"></div>
-            <h2 className={getMenuHightlight(MenuStep.UPLOAD_VIDEO, currentMenuStep)}>
+            <h2 className={getMenuHightlight(CalibrationCreationSteps.UPLOAD_VIDEO, currentMenuStep)}>
                 <span className="heading-circle">1</span>
                 Upload calibration video
             </h2>
-            <h2 className={getMenuHightlight(MenuStep.SELECT_POINTS, currentMenuStep)}>
+            <h2 className={getMenuHightlight(CalibrationCreationSteps.SELECT_FOUR_POINTS, currentMenuStep)}>
                 <span className="heading-circle">2</span>
                 Select calibration points
             </h2>
