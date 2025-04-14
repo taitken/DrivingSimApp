@@ -1,5 +1,6 @@
 import { XY } from "../models/xy.model";
 import { EventEmitter } from "../utility/event-emitter";
+import { BaseContentService } from "./base-content.service";
 
 export enum CalibrationCreationSteps {
   UPLOAD_VIDEO,
@@ -7,9 +8,6 @@ export enum CalibrationCreationSteps {
   SELECT_FOUR_POINTS
 }
 
-export class CalibrationCreationService {
+export class CalibrationCreationService extends BaseContentService {
     public stepEmitter: EventEmitter<CalibrationCreationSteps> = new EventEmitter<CalibrationCreationSteps>(CalibrationCreationSteps.UPLOAD_VIDEO);
-    public videoFileEmitter: EventEmitter<File> = new EventEmitter<File>(null);
-    public videoSectionEmitter: EventEmitter<XY> = new EventEmitter<XY>(null);
-    public calibrationPointsEmitter: EventEmitter<XY[]> = new EventEmitter<XY[]>([]);
 }

@@ -1,12 +1,15 @@
 import { useRef, useState, useEffect } from "react";
-import { ServiceProvider } from "../../../../../services/service-provider.service";
-import { StateTrigger } from "../../../../../services/state.service";
 import { VideoCanvasThumbnail } from "./video-canvas-thumbnail/video-canvas-thumbnail";
 import './video-canvas.css'
-import { XY } from "../../../../../models/xy.model";
+import { XY } from "../../../../models/xy.model";
+import { BaseContentService } from "../../../../services/base-content.service";
 
+interface UiButtonInterface {
+    rowCols: XY,
+    eventEmitterService: BaseContentService
+}
 
-export function VideoCanvas({ rowCols }: { rowCols: XY }) {
+export function VideoCanvas({ rowCols, eventEmitterService }: UiButtonInterface) {
     const calibrationCanvas = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const thumbnailContainerRef = useRef<HTMLDivElement>(null);
@@ -29,11 +32,13 @@ export function VideoCanvas({ rowCols }: { rowCols: XY }) {
             else thumbnailContainerRef.current.scrollLeft -= 5;
         });
 
-        let sub1 = ServiceProvider.calibrationCreationService.videoFileEmitter.listenForUpdateAndExecuteImmediately((newVideoFile => {
+        let sub1 = eventEmitterService.videoFileEmitter.listenForUpdateAndExecuteImmediately((newVideoFile => {
             onVideoDrop(newVideoFile);
         }));
-        let sub2 = ServiceProvider.calibrationCreationService.videoSectionEmitter.listenForUpdates((newVideoSectionXY => {
-            selectVideoSection(selectedSection == newVideoSectionXY ? new XY(0, 0) : newVideoSectionXY)
+        let sub2 = eventEmitterService.videoSectionEmitter.listenForUpdates((newVideoSectionXY => {
+            if (calibrationCanvas.current != null) {
+                selectVideoSection(selectedSection == newVideoSectionXY ? new XY(0, 0) : newVideoSectionXY)
+            }
         }));
         return () => {
             sub1.unsubscribe();
@@ -75,7 +80,6 @@ export function VideoCanvas({ rowCols }: { rowCols: XY }) {
         }
     }
 
-
     function drawGridLines() {
         const verticalLines = rowCols.x - 1;
         const horizontalLines = rowCols.y - 1;
@@ -93,7 +97,7 @@ export function VideoCanvas({ rowCols }: { rowCols: XY }) {
 
     function drawVideoOnCanvas(image: CanvasImageSource, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
         selectedPoints = [];
-        ServiceProvider.calibrationCreationService.calibrationPointsEmitter.update(selectedPoints);
+        eventEmitterService.selectedCanvasPointsEmitter.update(selectedPoints);
         calibrationCanvas.current.getContext('2d').drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
@@ -130,7 +134,7 @@ export function VideoCanvas({ rowCols }: { rowCols: XY }) {
                 ctx.lineTo(orderedPoints[3].x, orderedPoints[3].y);
                 ctx.lineTo(orderedPoints[0].x, orderedPoints[0].y);
                 ctx.stroke();
-                ServiceProvider.calibrationCreationService.calibrationPointsEmitter.update(selectedPoints);
+                eventEmitterService.selectedCanvasPointsEmitter.update(selectedPoints);
             }
         }
     }

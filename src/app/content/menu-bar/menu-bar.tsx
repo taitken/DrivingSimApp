@@ -14,7 +14,7 @@ export default function MenuBar() {
     const [selectedPoints, setSelectedPoints] = useState([new XY(0, 0), new XY(0, 0), new XY(0, 0), new XY(0, 0)]);
 
     useEffect(() => {
-        let sub1 = ServiceProvider.calibrationCreationService.calibrationPointsEmitter.listenForUpdates((newSelectedPoints) => {
+        let sub1 = ServiceProvider.calibrationCreationService.selectedCanvasPointsEmitter.listenForUpdates((newSelectedPoints) => {
             setSelectedPoints(newSelectedPoints)
         });
         let sub2 = ServiceProvider.calibrationCreationService.stepEmitter.listenForUpdates((newMenuStep: CalibrationCreationSteps) => {
@@ -75,7 +75,7 @@ export default function MenuBar() {
 
     function resetToStart() {
         ServiceProvider.calibrationCreationService.stepEmitter.update(CalibrationCreationSteps.UPLOAD_VIDEO);
-        ServiceProvider.calibrationCreationService.calibrationPointsEmitter.update([]);
+        ServiceProvider.calibrationCreationService.selectedCanvasPointsEmitter.update([]);
     }
 
     return (

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { VideoCanvas } from "./video-canvas/video-canvas";
-import { XY } from "../../../../models/xy.model";
+import { XY } from "../../../models/xy.model";
+import { BaseContentService } from "../../../services/base-content.service";
 
-export function CalibrationPoints() {
+export function VideoCanvasContainer({eventEmitterService} : {eventEmitterService: BaseContentService}) {
     const [rowCols, setRowCols] = useState(new XY(2, 2));
 
     return (
@@ -15,7 +16,7 @@ export function CalibrationPoints() {
                     Rows: <input name="myInput" value={rowCols.y} onChange={(e) => { setRowCols(new XY(rowCols.x, +e.target.value)) }} />
                 </label>
             </div>
-            <VideoCanvas rowCols={rowCols}></VideoCanvas>
+            <VideoCanvas eventEmitterService={eventEmitterService} rowCols={rowCols}></VideoCanvas>
         </>
     )
 }

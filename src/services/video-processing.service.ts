@@ -1,3 +1,4 @@
+import { BaseContentService } from "./base-content.service";
 
 export enum VideoProcessingSteps{
   PICK_CALIBRATION_FILE,
@@ -5,7 +6,6 @@ export enum VideoProcessingSteps{
   SELECT_TWO_POINTS
 }
 
-export class VideoProcessingService {
-  
+export class VideoProcessingService extends BaseContentService{
 
 }

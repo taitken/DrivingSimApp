@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react"
-import { ServiceProvider } from "../../../../../../services/service-provider.service";
-import { StateTrigger } from "../../../../../../services/state.service";
+import { ServiceProvider } from "../../../../../services/service-provider.service";
 import './video-canvas-thumbnail.css'
-import { XY } from "../../../../../../models/xy.model";
+import { XY } from "../../../../../models/xy.model";
 
 
 interface VideoCanvasThumbnailProps {

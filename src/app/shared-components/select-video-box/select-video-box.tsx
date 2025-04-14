@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { ServiceProvider } from "../../../../services/service-provider.service";
-import { CalibrationCreationSteps } from "../../../../services/calibration-creation.service";
+import './select-video-box.css'
 
-export function CalibrationVideo() {
+export function SelectVideoBox({ videoSelectFunc }: { videoSelectFunc: (videoFile: File) => void }) {
     const inputRef = useRef<HTMLInputElement>(null);
     const dropZone = useRef<HTMLDivElement>(null);
     const [dragOver, setdragOver] = useState(false);
@@ -34,8 +33,7 @@ export function CalibrationVideo() {
     }
 
     function onVideoDrop(fileList: FileList) {
-        ServiceProvider.calibrationCreationService.videoFileEmitter.update(fileList[0]);
-        ServiceProvider.calibrationCreationService.stepEmitter.update(CalibrationCreationSteps.SELECT_FOUR_POINTS);
+        videoSelectFunc(fileList[0]);
     }
 
     return (

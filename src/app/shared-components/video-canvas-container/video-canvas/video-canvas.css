@@ -1,0 +1,12 @@
+.canvas-container {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+}
+
+
+  .video-canvas{
+    top: 0;
+  }
