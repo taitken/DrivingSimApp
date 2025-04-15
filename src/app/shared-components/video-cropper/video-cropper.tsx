@@ -12,8 +12,6 @@ export function VideoCropper({ rowCols, eventEmitterService }: UiButtonInterface
     const calibrationCanvas = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [selectedSection, setSelectedSection] = useState(null)
-    let frameWidth: number;
-    let frameHeight: number;
     let selectedPoints: XY[] = [];
 
     window.onresize = function () {
@@ -25,9 +23,8 @@ export function VideoCropper({ rowCols, eventEmitterService }: UiButtonInterface
         let sub1 = eventEmitterService.videoFileEmitter.listenForUpdateAndExecuteImmediately((newVideoFile => {
             onVideoDrop(newVideoFile);
         }));
-        let sub2 = eventEmitterService.videoSectionEmitter.listenForUpdateAndExecuteImmediately((newSection => {
+        let sub2 = eventEmitterService.selectedVideoSectionEmitter.listenForUpdateAndExecuteImmediately((newSection => {
             setSelectedSection(newSection);
-
         }));
         return () => {
             sub1.unsubscribe();
@@ -37,7 +34,6 @@ export function VideoCropper({ rowCols, eventEmitterService }: UiButtonInterface
 
     useEffect(() => {
         copyVideoToCanvas();
-
     }, [rowCols])
 
     function onVideoDrop(selectedFile: File) {
@@ -124,10 +120,10 @@ export function VideoCropper({ rowCols, eventEmitterService }: UiButtonInterface
     function mouseClick(event) {
         let newSection = calculateSection(event, calibrationCanvas.current.getBoundingClientRect(), rowCols);
         if (selectedSection != null && selectedSection.x == newSection.x && selectedSection.y == newSection.y) {
-            eventEmitterService.videoSectionEmitter.update(null)
+            eventEmitterService.selectedVideoSectionEmitter.update(null)
         }
         else {
-            eventEmitterService.videoSectionEmitter.update(newSection)
+            eventEmitterService.selectedVideoSectionEmitter.update(newSection)
         }
     }
 

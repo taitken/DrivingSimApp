@@ -1,9 +1,13 @@
-.canvas-container {
+.video-canvas-container {
   position: relative;
-  width: 100%;
+  width: 70%;
   max-width: 1280px;
   margin: 0 auto;
   aspect-ratio: 16 / 9;
+}
+
+.video-canvas-container:hover {
+  cursor:crosshair;
 }
 
 

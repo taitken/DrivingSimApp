@@ -19,7 +19,8 @@ export class CalibrationCreationService extends BaseContentService {
 
   public resetEmitters() {
     this.videoFileEmitter.update(null);
-    this.videoSectionEmitter.update(null);
+    this.selectedVideoSectionEmitter.update(null);
+    this.croppedVideoSections.update(null);
     this.selectedCanvasPointsEmitter.update(null);
     this.stepEmitter.update(CalibrationCreationSteps.UPLOAD_VIDEO);
   }

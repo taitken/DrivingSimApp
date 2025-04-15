@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { ServiceProvider } from "../../../../services/service-provider.service";
-import { VideoProcessingFilePicker } from "./steps/video-processing-file-picker";
 import { VideoProcessingSteps } from "../../../../services/video-processing.service";
-import { VideoProcessingSelectPoints } from "./steps/video-processing-select-points";
-import { VideoProcessingVideoPicker } from "./steps/video-processing-video-picker";
+import { SelectVideoBoxContainer } from "../../../shared-components/select-video-box/select-video-box-container";
+import { VideoCanvasContainer } from "../../../shared-components/video-canvas/video-canvas-container";
+import { CalibrationFilePickerContainer } from "../../../shared-components/calibration-file-picker/calibrtion-file-picker-container";
 
 export function VideoProcessingContent() {
     const [selectedStep, setSelectedStep] = useState(null)
+    let eventEmitterService = ServiceProvider.videoProcessingService;
+    const selectPointsDesc = "Please select the position of the tyre. This will be used in the analytics processing as a starting point when calculating distance to the road lane line.";
 
     useEffect(() => {
         let sub1 = ServiceProvider.videoProcessingService.stepEmitter.listenForUpdateAndExecuteImmediately((newStep => {
@@ -18,9 +20,9 @@ export function VideoProcessingContent() {
     }, []);
     return (
         <>
-            {selectedStep == VideoProcessingSteps.PICK_CALIBRATION_FILE && <VideoProcessingFilePicker></VideoProcessingFilePicker>}
-            {selectedStep == VideoProcessingSteps.PICK_VIDEO && <VideoProcessingVideoPicker></VideoProcessingVideoPicker>}
-            {selectedStep == VideoProcessingSteps.SELECT_WHEEL_POSITION && <VideoProcessingSelectPoints ></VideoProcessingSelectPoints>}
+            {selectedStep == VideoProcessingSteps.PICK_CALIBRATION_FILE && <CalibrationFilePickerContainer eventEmitterService={eventEmitterService}></CalibrationFilePickerContainer>}
+            {selectedStep == VideoProcessingSteps.PICK_VIDEO && <SelectVideoBoxContainer eventEmitterService={eventEmitterService}></SelectVideoBoxContainer>}
+            {selectedStep == VideoProcessingSteps.SELECT_WHEEL_POSITION && <VideoCanvasContainer eventEmitterService={eventEmitterService} numberSelectedPoints={1} description={selectPointsDesc}></VideoCanvasContainer>}
         </>
     )
 

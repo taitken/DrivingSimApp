@@ -1,9 +1,0 @@
-.thumb-canvas-container{
-  border: 2px solid rgba(255, 255, 255, 0);
-  transition: all .3s;
-}
-
-.thumb-canvas-container:hover, .thumb-canvas-container.selected{
-  cursor: pointer;
-  border: 2px solid rgb(0, 162, 255);
-}

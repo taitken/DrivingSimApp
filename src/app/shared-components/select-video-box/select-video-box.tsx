@@ -38,29 +38,27 @@ export function SelectVideoBox({ videoSelectFunc }: { videoSelectFunc: (videoFil
 
     return (
         <>
-            <div className="canvas-container">
-                <div className={"drop-zone-container"}>
-                    <div ref={dropZone} className={"drop-zone ".concat(dragOver ? "drop-zone-drag-over " : "")}
-                        id="calibrationDropZone"
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOverEvent}
-                        onDragLeave={handleDragEnd}
-                        onClick={handleClick}
-                    >
-                        <span className="drop-zone__prompt">
-                            <i className="fa fa-upload"></i>
-                            Drop your .mkv here or <strong>Browse files</strong>
-                        </span>
-                        <input
-                            type="file"
-                            ref={inputRef}
-                            className="drop-zone__input"
-                            accept=".mkv,video/*"
-                            onChange={handleChange}
-                        />
-                    </div>
+            <div className={"drop-zone-container"}>
+                <div ref={dropZone} className={"drop-zone ".concat(dragOver ? "drop-zone-drag-over " : "")}
+                    id="calibrationDropZone"
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOverEvent}
+                    onDragLeave={handleDragEnd}
+                    onClick={handleClick}
+                >
+                    <span className="drop-zone__prompt">
+                        <i className="fa fa-upload"></i>
+                        Drop your .mkv here or <strong>Browse files</strong>
+                    </span>
+                    <input
+                        type="file"
+                        ref={inputRef}
+                        className="drop-zone__input"
+                        accept=".mkv,video/*"
+                        onChange={handleChange}
+                    />
                 </div>
-            </div >
+            </div>
         </>
     )
 }

@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { SelectVideoBox } from "../../../shared-components/select-video-box/select-video-box";
 import { ServiceProvider } from "../../../../services/service-provider.service";
 import { CalibrationCreationSteps } from "../../../../services/calibration-creation.service";
-import { CalibrationCreationSelectPoints } from "./steps/calibration-creation-select-points";
 import { CalibrationCreationEnterRealWorldMeasurements } from "./steps/calibration-creation-enter-real-world-measurements";
-import { CalibrationCreationCrop } from "./steps/calibration-creation-crop";
 import { CalibrationCreationConfirm } from "./steps/calibration-creation-confirm";
+import { SelectVideoBoxContainer } from "../../../shared-components/select-video-box/select-video-box-container";
+import { VideoCropperContainer } from "../../../shared-components/video-cropper/video-cropper-container";
+import { VideoCanvasContainer } from "../../../shared-components/video-canvas/video-canvas-container";
 
 
 export function CalibrationCreationContent() {
     const [selectedStep, setSelectedStep] = useState(null)
+    const selectPointsDesc = "Please select four corners of a real world object with known dimensions. The dimensions selected in pixels from the video will be compared to the real world dimensions to produce a homography matrix file.";
+    let eventEmitterService = ServiceProvider.calibrationCreationService;
 
     useEffect(() => {
         let sub1 = ServiceProvider.calibrationCreationService.stepEmitter.listenForUpdateAndExecuteImmediately((newStep => {
@@ -20,16 +22,11 @@ export function CalibrationCreationContent() {
         }
     }, []);
 
-    function onVideoSelect(videoSelected: File) {
-        ServiceProvider.calibrationCreationService.videoFileEmitter.update(videoSelected);
-        ServiceProvider.calibrationCreationService.stepEmitter.update(CalibrationCreationSteps.CROP_VIDEO);
-    }
-
     return (
         <>
-            {selectedStep == CalibrationCreationSteps.UPLOAD_VIDEO && <SelectVideoBox videoSelectFunc={onVideoSelect}></SelectVideoBox>}
-            {selectedStep == CalibrationCreationSteps.CROP_VIDEO && <CalibrationCreationCrop ></CalibrationCreationCrop>}
-            {selectedStep == CalibrationCreationSteps.SELECT_FOUR_POINTS && <CalibrationCreationSelectPoints ></CalibrationCreationSelectPoints>}
+            {selectedStep == CalibrationCreationSteps.UPLOAD_VIDEO && <SelectVideoBoxContainer eventEmitterService={eventEmitterService}></SelectVideoBoxContainer>}
+            {selectedStep == CalibrationCreationSteps.CROP_VIDEO && <VideoCropperContainer eventEmitterService={eventEmitterService}></VideoCropperContainer>}
+            {selectedStep == CalibrationCreationSteps.SELECT_FOUR_POINTS && <VideoCanvasContainer eventEmitterService={eventEmitterService} numberSelectedPoints={4} description={selectPointsDesc}></VideoCanvasContainer>}
             {selectedStep == CalibrationCreationSteps.ENTER_REAL_WORLD_MEASUREMENTS && <CalibrationCreationEnterRealWorldMeasurements ></CalibrationCreationEnterRealWorldMeasurements>}
             {selectedStep == CalibrationCreationSteps.CONFIRM && <CalibrationCreationConfirm ></CalibrationCreationConfirm>}
         </>

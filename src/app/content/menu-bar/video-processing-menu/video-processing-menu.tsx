@@ -67,15 +67,6 @@ export default function CalibrationTestingMenu() {
                 <span className="heading-circle">3</span>
                 Select wheel position
             </h2>
-            <div className="w-100 d-flex justify-content-center">
-                <div className="mb-3 w-75">
-                    <div className="d-flex justify-content-center mb-2">
-                        <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[0] : new XY(0, 0))} />
-                    </div>
-
-                </div>
-            </div>
-
             <div className="d-flex justify-content-center">
                 <div className="me-1"><UiButton onClick={resetToStart}>Process Video</UiButton></div>
                 <div><UiButton onClick={resetToStart}>Reset</UiButton></div>

@@ -11,15 +11,21 @@ export function VideoCropperContainer({ eventEmitterService }: { eventEmitterSer
     const [selectedSection, setSelectedSection] = useState(null)
 
     useEffect(() => {
-        let sub1 = eventEmitterService.videoSectionEmitter.listenForUpdateAndExecuteImmediately((newSection => {
+        eventEmitterService.croppedVideoSections.update(new XY(2, 2));
+        let sub1 = eventEmitterService.selectedVideoSectionEmitter.listenForUpdateAndExecuteImmediately((newSection => {
             setSelectedSection(newSection);
+        }));
+        let sub2 = eventEmitterService.croppedVideoSections.listenForUpdateAndExecuteImmediately((croppedSections => {
+            setRowCols(croppedSections);
         }));
         return () => {
             sub1.unsubscribe();
+            sub2.unsubscribe();
         }
     }, []);
 
     function skip() {
+        eventEmitterService.selectedVideoSectionEmitter.update(null)
         eventEmitterService.nextStep();
     }
 
@@ -35,11 +41,11 @@ export function VideoCropperContainer({ eventEmitterService }: { eventEmitterSer
                 <div className="mb-2 d-flex">
                     <div className="form-group me-2">
                         <span>Columns</span>
-                        <input className="form-field" type="number" name="myInput" value={rowCols.x} onChange={(e) => { if (validate(e)) setRowCols(new XY(+e.target.value, rowCols.y)) }} />
+                        <input className="form-field" type="number" name="myInput" value={rowCols.x} onChange={(e) => { if (validate(e)) eventEmitterService.croppedVideoSections.update(new XY(+e.target.value, rowCols.y)) }} />
                     </div>
                     <div className="form-group">
                         <span>Rows</span>
-                        <input className="form-field" type="number" name="myInput" value={rowCols.y} onChange={(e) => { if (validate(e)) setRowCols(new XY(rowCols.x, +e.target.value)) }} />
+                        <input className="form-field" type="number" name="myInput" value={rowCols.y} onChange={(e) => { if (validate(e)) eventEmitterService.croppedVideoSections.update(new XY(rowCols.x, +e.target.value)) }} />
                     </div>
                 </div>
                 <div className="mb-3">

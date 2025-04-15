@@ -1,24 +1,16 @@
 import { useRef, useState, useEffect } from "react";
-import { VideoCanvasThumbnail } from "./video-canvas-thumbnail/video-canvas-thumbnail";
 import './video-canvas.css'
-import { XY } from "../../../../models/xy.model";
-import { BaseContentService } from "../../../../services/base-content.service";
+import { XY } from "../../../models/xy.model";
+import { BaseContentService } from "../../../services/base-content.service";
 
 interface UiButtonInterface {
-    rowCols: XY,
     eventEmitterService: BaseContentService,
     numberSelectedPoints: number
 }
 
-export function VideoCanvas({ rowCols, eventEmitterService, numberSelectedPoints }: UiButtonInterface) {
+export function VideoCanvas({ eventEmitterService, numberSelectedPoints }: UiButtonInterface) {
     const calibrationCanvas = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const thumbnailContainerRef = useRef<HTMLDivElement>(null);
-    const [thumbnails, setThumbnails] = useState([]);
-    const [selectedSection, setSelectedSection] = useState(null)
-    const scaleFactor: number = 5;
-    let frameWidth: number;
-    let frameHeight: number;
     let selectedPoints: XY[] = [];
 
     window.onresize = function () {
@@ -27,30 +19,18 @@ export function VideoCanvas({ rowCols, eventEmitterService, numberSelectedPoints
     }
 
     useEffect(() => {
-        // Horizontal scrolling
-        thumbnailContainerRef.current.addEventListener("wheel", (e) => {
-            if (e.deltaY > 0) thumbnailContainerRef.current.scrollLeft += 5;
-            else thumbnailContainerRef.current.scrollLeft -= 5;
-        });
-
+        onSeekedVideo();
         let sub1 = eventEmitterService.videoFileEmitter.listenForUpdateAndExecuteImmediately((newVideoFile => {
             onVideoDrop(newVideoFile);
         }));
-        let sub2 = eventEmitterService.videoSectionEmitter.listenForUpdates((newVideoSectionXY => {
-            if (calibrationCanvas.current != null) {
-                selectVideoSection(selectedSection == newVideoSectionXY ? new XY(0, 0) : newVideoSectionXY)
-            }
+        let sub2 = eventEmitterService.selectedVideoSectionEmitter.listenForUpdateAndExecuteImmediately((newVideoSectionXY => {
+            selectVideoSection(newVideoSectionXY);
         }));
         return () => {
             sub1.unsubscribe();
             sub2.unsubscribe();
         }
     }, []);
-
-    useEffect(() => {
-        onSeekedVideo();
-
-    }, [rowCols])
 
     function onVideoDrop(selectedFile: File) {
         if (selectedFile && videoRef.current) {
@@ -73,27 +53,7 @@ export function VideoCanvas({ rowCols, eventEmitterService, numberSelectedPoints
     }
 
     function onSeekedVideo() {
-        if (true) {
-            frameWidth = videoRef.current.videoWidth / rowCols.x;
-            frameHeight = videoRef.current.videoHeight / rowCols.y;
-            selectVideoSection(new XY(0, 0));
-            generateThumbnails();
-        }
-    }
-
-    function drawGridLines() {
-        const verticalLines = rowCols.x - 1;
-        const horizontalLines = rowCols.y - 1;
-        const xWidth = calibrationCanvas.current.width / rowCols.x;
-        const yHeight = calibrationCanvas.current.height / rowCols.y;
-        let ctx = calibrationCanvas.current.getContext('2d');
-        ctx.fillStyle = "yellow";
-        for (let x = 1; x <= verticalLines; x++) {
-            ctx.fillRect(xWidth * x - 1, 0, 2, calibrationCanvas.current.height)
-        }
-        for (let y = 1; y <= horizontalLines; y++) {
-            ctx.fillRect(0, yHeight * y - 1, calibrationCanvas.current.width, 2)
-        }
+        selectVideoSection(eventEmitterService.selectedVideoSectionEmitter.getValue());
     }
 
     function drawVideoOnCanvas(image: CanvasImageSource, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
@@ -103,9 +63,7 @@ export function VideoCanvas({ rowCols, eventEmitterService, numberSelectedPoints
     }
 
     function selectCanvasDot(event) {
-        if (selectedSection &&
-            !(selectedSection.x == 0 && selectedSection.y == 0)
-            && selectedPoints.length < numberSelectedPoints) {
+        if (selectedPoints.length < numberSelectedPoints) {
             let ctx = calibrationCanvas.current.getContext('2d');
             let rect = calibrationCanvas.current.getBoundingClientRect();
             ctx.fillStyle = "red";
@@ -142,50 +100,24 @@ export function VideoCanvas({ rowCols, eventEmitterService, numberSelectedPoints
     }
 
     function selectVideoSection(xy: XY) {
-        setSelectedSection(xy);
-        if (xy.x == 0 && xy.y == 0) {
+        if (!xy) {
             drawVideoOnCanvas(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight, 0, 0, videoRef.current.clientWidth, videoRef.current.clientHeight);
-            drawGridLines();
         } else {
-            drawVideoOnCanvas(videoRef.current, frameWidth * (xy.x - 1), frameHeight * (xy.y - 1), frameWidth, frameHeight, 0, 0, videoRef.current?.clientWidth, videoRef.current?.clientHeight);
+            let frameWidth = videoRef.current.videoWidth / eventEmitterService.croppedVideoSections.getValue().x;
+            let frameHeight = videoRef.current.videoHeight / eventEmitterService.croppedVideoSections.getValue().y;
+            drawVideoOnCanvas(videoRef.current, frameWidth * xy.x, frameHeight * xy.y, frameWidth, frameHeight, 0, 0, videoRef.current?.clientWidth, videoRef.current?.clientHeight);
         }
-    }
-
-    function generateThumbnails() {
-        const newThumbnails = [];
-        for (let x = 1; x <= rowCols.x; x++) {
-            for (let y = 1; y <= rowCols.y; y++) {
-                newThumbnails.push(
-                    <div className="m-2" key={x.toString() + y.toString()}>
-                        <VideoCanvasThumbnail
-                            image={videoRef.current}
-                            xy={{ x: x, y: y }}
-                            width={videoRef.current.clientWidth / scaleFactor}
-                            height={videoRef.current.clientHeight / scaleFactor}
-                            sx={frameWidth * (x - 1)}
-                            sy={frameHeight * (y - 1)}
-                            sw={frameWidth}
-                            sh={frameHeight}
-                            eventEmitterService={eventEmitterService}></VideoCanvasThumbnail>
-                    </div>
-                )
-            }
-        }
-        setThumbnails(newThumbnails);
     }
 
     return (
         <>
-            <div className="canvas-container">
+            <div className="video-canvas-container">
                 <div className="position-relative">
                     <video ref={videoRef}></video>
                     <canvas className="video-canvas position-absolute" ref={calibrationCanvas}
                         onClick={selectCanvasDot}></canvas>
                 </div>
             </div >
-            <div className="d-flex w-100 overflow-auto" ref={thumbnailContainerRef}>
-                {thumbnails}
-            </div>
         </>
 
     )

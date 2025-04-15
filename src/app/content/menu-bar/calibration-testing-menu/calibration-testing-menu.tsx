@@ -67,33 +67,18 @@ export default function CalibrationTestingMenu() {
                 <span className="heading-circle">1</span>
                 Select Calibration File
             </h2>
-            <div>
-                {selectedFile ? selectedFile : "Select file from list."}
-            </div>
             <h2 className={getMenuHightlight(CalibrationTestingSteps.PICK_VIDEO, currentMenuStep)}>
                 <span className="heading-circle">2</span>
                 Select Video For Testing
             </h2>
-            <h2 className={getMenuHightlight(CalibrationTestingSteps.SELECT_TWO_POINTS, currentMenuStep)}>
+            <h2 className={getMenuHightlight(CalibrationTestingSteps.CROP_VIDEO, currentMenuStep)}>
                 <span className="heading-circle">3</span>
+                Crop Video
+            </h2>
+            <h2 className={getMenuHightlight(CalibrationTestingSteps.SELECT_TWO_POINTS, currentMenuStep)}>
+                <span className="heading-circle">4</span>
                 Select Two Points
             </h2>
-            <div className="w-100 d-flex justify-content-center">
-                <div className="mb-3 w-75">
-                    <div className="d-flex mb-2">
-                        <div className="w-50 d-flex me-2">
-                            <label className="me-2 ">1:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[0] : new XY(0, 0))} />
-                        </div>
-
-                        <div className="w-50 d-flex">
-                            <label className="me-2 ">2:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[1] : new XY(0, 0))} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div className="d-flex justify-content-center">
                 <div className="me-1"><UiButton onClick={calcDistance}>Calculate Distance</UiButton></div>
                 <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
