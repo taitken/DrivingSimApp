@@ -19,7 +19,7 @@ export default function Content() {
     return (
         <>
             <div className="layout-container">
-                <MenuBar contentDisplayed={selectedContent}/>
+                <MenuBar contentDisplayed={selectedContent} />
                 <div>
                     <div className="buttons-cotnainer d-flex">
                         <UiButton onClick={() => setContent(ContentDisplayed.CALIBRATION_CREATION)}>

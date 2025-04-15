@@ -1,27 +1,28 @@
-import { useEffect, useState } from 'react';
-import { ServiceProvider } from '../../../../services/service-provider.service';
-import { UiButton } from '../../../ui/ui-button/ui-button';
-import { CalibrationFilePicker } from '../../../shared-components/calibration-file-picker/calibration-file-picker';
+import { useState, useEffect } from "react";
+import { ServiceProvider } from "../../../../services/service-provider.service";
+import { VideoProcessingFilePicker } from "./steps/video-processing-file-picker";
+import { VideoProcessingSteps } from "../../../../services/video-processing.service";
+import { VideoProcessingSelectPoints } from "./steps/video-processing-select-points";
+import { VideoProcessingVideoPicker } from "./steps/video-processing-video-picker";
 
 export function VideoProcessingContent() {
-    const [selectedRow, setSelectedRow] = useState(null);
+    const [selectedStep, setSelectedStep] = useState(null)
 
-    function selectHomopgrayFile(rowData: any) {
-        setSelectedRow(rowData);
-    }
-
-    function processVideo() {
-        if(selectedRow?.fileName)
-        {
-            ServiceProvider.backendService.processVideo(selectedRow.fileName).then((response) => {
-                console.log(response)
-            });
+    useEffect(() => {
+        let sub1 = ServiceProvider.videoProcessingService.stepEmitter.listenForUpdateAndExecuteImmediately((newStep => {
+            setSelectedStep(newStep);
+        }));
+        return () => {
+            sub1.unsubscribe();
         }
-    }
-
+    }, []);
     return (
         <>
-            <CalibrationFilePicker onSelectFile={selectHomopgrayFile}></CalibrationFilePicker>
+            {selectedStep == VideoProcessingSteps.PICK_CALIBRATION_FILE && <VideoProcessingFilePicker></VideoProcessingFilePicker>}
+            {selectedStep == VideoProcessingSteps.PICK_VIDEO && <VideoProcessingVideoPicker></VideoProcessingVideoPicker>}
+            {selectedStep == VideoProcessingSteps.SELECT_WHEEL_POSITION && <VideoProcessingSelectPoints ></VideoProcessingSelectPoints>}
         </>
     )
+
 }
+

@@ -11,6 +11,10 @@ export class CalibrationTestingService extends BaseContentService {
   public stepEmitter: EventEmitter<CalibrationTestingSteps> = new EventEmitter<CalibrationTestingSteps>(CalibrationTestingSteps.PICK_CALIBRATION_FILE);
   public selectedHomographyFile: EventEmitter<string> = new EventEmitter<string>(null);
 
+  public nextStep(stepsToAdd?: number) {
+    this.stepEmitter.update(this.stepEmitter.getValue() + (stepsToAdd ?? 1))
+  }
+
   public resetEmitters() {
     this.videoFileEmitter.update(null);
     this.videoSectionEmitter.update(null);

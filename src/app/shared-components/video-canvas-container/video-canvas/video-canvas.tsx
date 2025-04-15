@@ -112,29 +112,30 @@ export function VideoCanvas({ rowCols, eventEmitterService, numberSelectedPoints
             ctx.fillRect(event.clientX - rect.left - 2, event.clientY - rect.top - 2, 5, 5)
             selectedPoints.push(new XY(event.clientX - rect.left, event.clientY - rect.top))
 
+            if (selectedPoints.length == numberSelectedPoints) {
+                if (numberSelectedPoints > 1) {
+                    selectedPoints.sort((a, b) => {
+                        if (a.x == b.x) return a.y - b.y;
+                        return a.x - b.x;
+                    });
+                    let orderedPoints = [selectedPoints[0], selectedPoints[1]].sort((a, b) => {
+                        if (a.y == b.y) return a.x - b.x;
+                        return a.y - b.y;
+                    }).concat([selectedPoints[2], selectedPoints[3]].sort((a, b) => {
+                        if (a.y == b.y) return b.x - a.x;
+                        return b.y - a.y;
+                    }));
 
-            if (selectedPoints.length == numberSelectedPoints && numberSelectedPoints > 1) {
-                selectedPoints.sort((a, b) => {
-                    if (a.x == b.x) return a.y - b.y;
-                    return a.x - b.x;
-                });
-                let orderedPoints = [selectedPoints[0], selectedPoints[1]].sort((a, b) => {
-                    if (a.y == b.y) return a.x - b.x;
-                    return a.y - b.y;
-                }).concat([selectedPoints[2], selectedPoints[3]].sort((a, b) => {
-                    if (a.y == b.y) return b.x - a.x;
-                    return b.y - a.y;
-                }));
-
-                ctx.strokeStyle = "yellow";
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(orderedPoints[0].x, orderedPoints[0].y);
-                for (let i = 1; i < numberSelectedPoints; i++) {
-                    ctx.lineTo(orderedPoints[i].x, orderedPoints[i].y);
+                    ctx.strokeStyle = "yellow";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(orderedPoints[0].x, orderedPoints[0].y);
+                    for (let i = 1; i < numberSelectedPoints; i++) {
+                        ctx.lineTo(orderedPoints[i].x, orderedPoints[i].y);
+                    }
+                    ctx.lineTo(orderedPoints[0].x, orderedPoints[0].y);
+                    ctx.stroke();
                 }
-                ctx.lineTo(orderedPoints[0].x, orderedPoints[0].y);
-                ctx.stroke();
                 eventEmitterService.selectedCanvasPointsEmitter.update(selectedPoints);
             }
         }

@@ -7,4 +7,6 @@ export abstract class BaseContentService {
     public selectedCanvasPointsEmitter: EventEmitter<XY[]> = new EventEmitter<XY[]>([]);
     
     public abstract resetEmitters();
+
+    public abstract nextStep(stepsToAdd?: number);
 }

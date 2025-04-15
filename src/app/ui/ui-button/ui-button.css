@@ -2,13 +2,20 @@
     background-color: #ffffff;
     border: none;
     font-size: 11px;
-    font-weight: 600;
-    padding: 12px 29px;
+    padding: 8px 20px;
     cursor: pointer;
     border-radius: 4px;
     color: #b4b3b3;
     transition: background-color 0.2s ease, color 0.3s ease;
     text-align: center;
+}
+
+.button-style.md{
+
+}
+
+.button-style.lg{
+    font-size: 15px;
 }
 
 .button-style:hover {
@@ -18,12 +25,19 @@
 }
 
 .button-style.accent {
-    background-color: #127be7;
+    background-color: #61a1fe;
     color: white;
 }
 
 .button-style.accent:hover {
-    background-color: #47a3ff;
+    background-color: rgb(87, 171, 255);
     color: white;
 }
 
+.button-style:disabled {
+    background-color: rgb(182, 182, 182) !important;
+}
+
+.button-style:disabled:hover {
+    cursor: default !important;
+}

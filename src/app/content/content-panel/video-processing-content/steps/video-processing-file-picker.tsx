@@ -1,0 +1,30 @@
+import { useEffect, useState } from 'react';
+import { ServiceProvider } from '../../../../../services/service-provider.service';
+import { CalibrationFilePicker } from '../../../../shared-components/calibration-file-picker/calibration-file-picker';
+import { UiButton } from '../../../../ui/ui-button/ui-button';
+import { VideoProcessingSteps } from '../../../../../services/video-processing.service';
+
+export function VideoProcessingFilePicker() {
+    const [selectedFile, setSelectedRow] = useState(null)
+
+    function onHomographyRowSelect(selectedRow) {
+        setSelectedRow(selectedRow.fileName);
+    }
+
+    function confirmSelection() {
+        if(!!selectedFile)
+        {
+            ServiceProvider.videoProcessingService.selectedHomographyFile.update(selectedFile);
+            ServiceProvider.videoProcessingService.stepEmitter.update(VideoProcessingSteps.PICK_VIDEO);
+        }
+    }
+
+    return (
+        <>
+            <CalibrationFilePicker onSelectFile={onHomographyRowSelect}></CalibrationFilePicker>
+            <div className='mt-3 w-25'>
+                <UiButton style="accent" disabled={!selectedFile} onClick={confirmSelection}>Confirm</UiButton>
+            </div>
+        </>
+    )
+}

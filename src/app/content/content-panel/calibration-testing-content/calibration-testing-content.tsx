@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { ServiceProvider } from "../../../../services/service-provider.service";
 import { CalibrationTestingSteps } from "../../../../services/calibration-testing.service";
-import { CalibrationTestingFilePicker } from "./calibration-testing-file-picker/calibration-testing-file-picker";
-import { CalibrationTestingVideoPicker } from "./calibration-testing-video-picker/calibration-testing-video-picker";
-import { CalibrationTestingSelectPoints } from "./calibration-testing-select-points/calibration-testing-select-points";
+import { CalibrationTestingFilePicker } from "./steps/calibration-testing-file-picker";
+import { CalibrationTestingVideoPicker } from "./steps/calibration-testing-video-picker";
+import { CalibrationTestingSelectPoints } from "./steps/calibration-testing-select-points";
 
 
 export function CalibrationTestingContent() {

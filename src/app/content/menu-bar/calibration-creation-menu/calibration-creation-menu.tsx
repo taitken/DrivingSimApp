@@ -9,7 +9,6 @@ import { UiButton } from "../../../ui/ui-button/ui-button";
 export default function CalibrationCreationMenu() {
     const [currentMenuStep, setMenuStep] = useState(CalibrationCreationSteps.UPLOAD_VIDEO);
     const [returnValue, setReturnValue] = useState('Waiting for API');
-    const [videoFile, setVideoFile] = useState(null);
     const [selectedPoints, setSelectedPoints] = useState([new XY(0, 0), new XY(0, 0), new XY(0, 0), new XY(0, 0)]);
 
     useEffect(() => {
@@ -19,13 +18,9 @@ export default function CalibrationCreationMenu() {
         let sub2 = ServiceProvider.calibrationCreationService.stepEmitter.listenForUpdates((newMenuStep: CalibrationCreationSteps) => {
             setMenuStep(newMenuStep)
         });
-        let sub3 = ServiceProvider.calibrationCreationService.videoFileEmitter.listenForUpdates((file) => {
-            setVideoFile(file)
-        });
         return () => {
             sub1.unsubscribe();
             sub2.unsubscribe();
-            sub3.unsubscribe();
         }
     });
 
@@ -53,9 +48,7 @@ export default function CalibrationCreationMenu() {
                 selectedPoints[3].x != 0 && selectedPoints[3].y != 0
             )
         ) {
-            ServiceProvider.backendService.calibrate(videoFile, selectedPoints).then((response) => {
-                setReturnValue(response.data);
-            });
+            ServiceProvider.calibrationCreationService.stepEmitter.update(CalibrationCreationSteps.ENTER_REAL_WORLD_MEASUREMENTS);
         }
     }
 
@@ -71,11 +64,15 @@ export default function CalibrationCreationMenu() {
             </h1>
             <div className="divider"></div>
             <h2 className={getMenuHightlight(CalibrationCreationSteps.UPLOAD_VIDEO, currentMenuStep)}>
-                <span className="heading-circle">1</span>
+                <span className="heading-circle">{CalibrationCreationSteps.UPLOAD_VIDEO.valueOf()}</span>
                 Upload calibration video
             </h2>
+            <h2 className={getMenuHightlight(CalibrationCreationSteps.CROP_VIDEO, currentMenuStep)}>
+                <span className="heading-circle">{CalibrationCreationSteps.CROP_VIDEO.valueOf()}</span>
+                Crop Video
+            </h2>
             <h2 className={getMenuHightlight(CalibrationCreationSteps.SELECT_FOUR_POINTS, currentMenuStep)}>
-                <span className="heading-circle">2</span>
+                <span className="heading-circle">{CalibrationCreationSteps.SELECT_FOUR_POINTS.valueOf()}</span>
                 Select calibration points
             </h2>
             <div className="w-100 d-flex justify-content-center">
@@ -83,31 +80,40 @@ export default function CalibrationCreationMenu() {
                     <div className="d-flex mb-2">
                         <div className="w-50 d-flex me-2">
                             <label className="me-2 ">1:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[0] : new XY(0,0))} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[0] : new XY(0, 0))} />
                         </div>
 
                         <div className="w-50 d-flex">
                             <label className="me-2 ">2:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[2] : new XY(0,0))} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[2] : new XY(0, 0))} />
                         </div>
                     </div>
                     <div className="d-flex">
                         <div className="w-50 d-flex me-2">
                             <label className="me-2 ">3:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[1] : new XY(0,0))} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[1] : new XY(0, 0))} />
                         </div>
                         <div className="w-50 d-flex">
                             <label className="me-2 ">4:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[3] : new XY(0,0))} />
+                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[3] : new XY(0, 0))} />
                         </div>
                     </div>
                 </div>
             </div>
-
             <div className="d-flex justify-content-center">
                 <div className="me-1"><UiButton onClick={calibrateData}>Confirm points</UiButton></div>
-                <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
             </div>
+            <h2 className={getMenuHightlight(CalibrationCreationSteps.ENTER_REAL_WORLD_MEASUREMENTS, currentMenuStep)}>
+                <span className="heading-circle">{CalibrationCreationSteps.ENTER_REAL_WORLD_MEASUREMENTS.valueOf()}</span>
+                Enter real world measurements
+            </h2>
+            <h2 className={getMenuHightlight(CalibrationCreationSteps.CONFIRM, currentMenuStep)}>
+                <span className="heading-circle">{CalibrationCreationSteps.CONFIRM.valueOf()}</span>
+                Confirm
+            </h2>
+
+            <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
+
 
             <div className="divider"></div>
             <div>{returnValue}</div>

@@ -64,7 +64,7 @@ export default function CalibrationTestingMenu() {
                 Select Video For Testing
             </h2>
             <h2 className={getMenuHightlight(VideoProcessingSteps.SELECT_WHEEL_POSITION, currentMenuStep)}>
-                <span className="heading-circle">2</span>
+                <span className="heading-circle">3</span>
                 Select wheel position
             </h2>
             <div className="w-100 d-flex justify-content-center">
