@@ -1,3 +1,4 @@
+import { Dimensions } from "../models/dimension.model";
 import { XY } from "../models/xy.model";
 import { EventEmitter } from "../utility/event-emitter";
 import { BaseContentService } from "./base-content.service";
@@ -12,7 +13,7 @@ export enum CalibrationCreationSteps {
 
 export class CalibrationCreationService extends BaseContentService {
   public stepEmitter: EventEmitter<CalibrationCreationSteps> = new EventEmitter<CalibrationCreationSteps>(CalibrationCreationSteps.UPLOAD_VIDEO);
-
+  public realWorldDimensionsEmitter: EventEmitter<Dimensions> = new EventEmitter<Dimensions>(null);
   public nextStep(stepsToAdd?: number) {
     this.stepEmitter.update(this.stepEmitter.getValue() + (stepsToAdd ?? 1))
   }

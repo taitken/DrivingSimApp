@@ -21,16 +21,19 @@ export default function Content() {
             <div className="layout-container">
                 <MenuBar contentDisplayed={selectedContent} />
                 <div>
-                    <div className="buttons-cotnainer d-flex">
-                        <UiButton onClick={() => setContent(ContentDisplayed.CALIBRATION_CREATION)}>
+                    <div className="ms-2 content-tab-container d-flex">
+                        <div className={"content-tab " + (selectedContent == ContentDisplayed.CALIBRATION_CREATION ? 'selected' : '')}
+                            onClick={() => setContent(ContentDisplayed.CALIBRATION_CREATION)}>
                             Calibration Creation
-                        </UiButton>
-                        <UiButton onClick={() => setContent(ContentDisplayed.CALIBRATION_TESTING)}>
+                        </div>
+                        <div className={"content-tab " + (selectedContent == ContentDisplayed.CALIBRATION_TESTING ? 'selected' : '')}
+                            onClick={() => setContent(ContentDisplayed.CALIBRATION_TESTING)}>
                             Calibration Testing
-                        </UiButton>
-                        <UiButton onClick={() => setContent(ContentDisplayed.VIDEO_PROCESSING)}>
+                        </div>
+                        <div className={"content-tab " + (selectedContent == ContentDisplayed.VIDEO_PROCESSING ? 'selected' : '')}
+                            onClick={() => setContent(ContentDisplayed.VIDEO_PROCESSING)}>
                             Video Processing
-                        </UiButton>
+                        </div>
                     </div>
                     <ContentPanel contentDisplayed={selectedContent} />
                 </div>

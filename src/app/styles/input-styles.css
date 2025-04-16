@@ -1,3 +1,5 @@
+@import './pallete.css';
+
 :root {
 
   --input-color: #99A3BA;
@@ -5,15 +7,15 @@
   --input-background: #fff;
   --input-placeholder: #CBD1DC;
 
-  --input-border-focus: #275EFE;
+  --input-border-focus: #7597ff;
 
-  --group-color: var(--input-color);
+  --group-color: var(--white);
   --group-border: var(--input-border);
-  --group-background: #EEF4FF;
+  --group-background: var(--primary-color-light);;
 
   --group-color-focus: #fff;
   --group-border-focus: var(--input-border-focus);
-  --group-background-focus: #678EFE;
+  --group-background-focus: var(--primary-color);
 
 }
 

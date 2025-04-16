@@ -1,9 +1,12 @@
+@import './../../styles/pallete.css';
 
 .content-panel {
     border-radius: 10px;
-    margin-top: 15px;
     background-color: #ffffff;
     padding: 30px;
     width: 50vw;
     min-width: 640px;
+    /* height: calc(100vh - 100px); */
+    display: flex;
+    flex-direction: column;
   }

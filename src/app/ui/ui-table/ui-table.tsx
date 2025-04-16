@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { HeaderKeyPair, TableData } from '../../../models/table-data'
+import { ColumnMetaData, TableData } from '../../../models/table-data'
 import './ui-table.css'
 
 export function UiTable({ tableData, selectedRow, onSelect }: { tableData: TableData, selectedRow?: any, onSelect?: (rowData: any) => void }) {
@@ -10,15 +10,15 @@ export function UiTable({ tableData, selectedRow, onSelect }: { tableData: Table
         }
     }
 
-    function generateHeaders(headers: HeaderKeyPair[]) {
+    function generateHeaders(headers: ColumnMetaData[]) {
         const returnElements = [];
         for (let i = 0; i < headers.length; i++) {
-            returnElements.push(<th key={'th-' + i.toString()}>{headers[i].headerString}</th>);
+            returnElements.push(<th className={headers[i].class} key={'th-' + i.toString()}>{headers[i].headerString}</th>);
         }
         return returnElements;
     }
 
-    function generateRows(rowData: any[], headers: HeaderKeyPair[]) {
+    function generateRows(rowData: any[], headers: ColumnMetaData[]) {
         const returnElements = [];
         for (let i = 0; i < rowData.length; i++) {
             let rowElements = [];
@@ -26,7 +26,7 @@ export function UiTable({ tableData, selectedRow, onSelect }: { tableData: Table
                 if (selectedRow == rowData[i]) {
                     rowElements.push(<td className="selected-row" key={'td-' + i.toString() + '-' + ii.toString()}>{rowData[i][headers[ii].fieldName]}</td>);
                 } else {
-                    rowElements.push(<td key={'td-' + i.toString() + '-' + ii.toString()}>{rowData[i][headers[ii].fieldName]}</td>);
+                    rowElements.push(<td className={headers[ii].class} key={'td-' + i.toString() + '-' + ii.toString()}>{rowData[i][headers[ii].fieldName]}</td>);
                 }
             }
             returnElements.push(<tr onClick={() => { onClickRow(rowData[i]) }} key={'tr-' + i.toString()}>{rowElements}</tr>)

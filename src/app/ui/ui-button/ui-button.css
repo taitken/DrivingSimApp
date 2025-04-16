@@ -1,3 +1,5 @@
+@import '../../styles/pallete.css';
+
 .button-style {
     background-color: #ffffff;
     border: none;
@@ -5,9 +7,19 @@
     padding: 8px 20px;
     cursor: pointer;
     border-radius: 4px;
-    color: #b4b3b3;
     transition: background-color 0.2s ease, color 0.3s ease;
     text-align: center;
+    color: var(--primary-color);;
+}
+
+.button-style:hover {
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.button-style.default{
+    border: 1px solid var(--primary-color);
 }
 
 .button-style.md{
@@ -18,19 +30,15 @@
     font-size: 15px;
 }
 
-.button-style:hover {
-    cursor: pointer;
-    background-color: #f5f4f4;
-    color: #333;
-}
+
 
 .button-style.accent {
-    background-color: #61a1fe;
+    background-color: var(--primary-color);
     color: white;
 }
 
 .button-style.accent:hover {
-    background-color: rgb(87, 171, 255);
+    background-color: var(--primary-color-light);  
     color: white;
 }
 

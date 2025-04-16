@@ -27,7 +27,7 @@ export default function CalibrationTestingMenu() {
             sub2.unsubscribe();
             sub3.unsubscribe();
         }
-    });
+    },[]);
 
     function getSelectedPointCoorString(points: XY) {
         if (points == null)

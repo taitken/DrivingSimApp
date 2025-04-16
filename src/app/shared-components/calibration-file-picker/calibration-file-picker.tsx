@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TableData } from '../../../models/table-data'
+import { ColumnMetaData, TableData } from '../../../models/table-data'
 import { UiTable } from '../../ui/ui-table/ui-table'
 import { ServiceProvider } from '../../../services/service-provider.service';
 
@@ -7,8 +7,8 @@ export function CalibrationFilePicker({onSelectFile} : {onSelectFile: (rowData: 
     const [selectedRow, setSelectedRow] = useState(null);
 
     const tableHeaders = [
-        { headerString: "File Name", fieldName: "fileName" },
-        { headerString: "Test", fieldName: "test" }
+        new ColumnMetaData("File Name",  "fileName"),
+        new ColumnMetaData("Test",  "test"),
     ];
 
     const [tableData, setTableData] = useState(new TableData(

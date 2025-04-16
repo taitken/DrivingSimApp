@@ -1,3 +1,5 @@
+@import './../styles/pallete.css';
+
 /* Main Container: Left & Right Panels */
 .layout-container {
   display: flex;
@@ -9,3 +11,32 @@
   display: block;
 }
 
+.content-tab-container{
+  background-color: var(--white);
+  box-shadow: 2px 2px 2px 0px #efefef;
+  border-bottom: 1px solid var(--primary-color-light) !important;
+  margin-bottom: -1px;
+}
+
+.content-tab{
+  padding: 10px 20px;
+  font-size: 13px;
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px solid var(--primary-color-light) !important;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  transition: all .25s;
+}
+
+.content-tab:hover{
+  cursor: pointer;
+  background-color: var(--primary-color-light);
+  color: var(--white);
+}
+
+.content-tab.selected{
+  background-color: white;
+  color: var(--primary-text) !important;
+  border-bottom: 1px solid var(--white) !important;;
+}

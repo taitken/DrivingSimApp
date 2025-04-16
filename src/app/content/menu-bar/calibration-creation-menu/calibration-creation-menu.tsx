@@ -22,7 +22,7 @@ export default function CalibrationCreationMenu() {
             sub1.unsubscribe();
             sub2.unsubscribe();
         }
-    });
+    }, []);
 
     function getSelectedPointCoorString(points: XY) {
         if (points == null)
@@ -75,48 +75,15 @@ export default function CalibrationCreationMenu() {
                 <span className="heading-circle">{CalibrationCreationSteps.SELECT_FOUR_POINTS.valueOf()}</span>
                 Select calibration points
             </h2>
-            <div className="w-100 d-flex justify-content-center">
-                <div className="mb-3 w-75">
-                    <div className="d-flex mb-2">
-                        <div className="w-50 d-flex me-2">
-                            <label className="me-2 ">1:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[0] : new XY(0, 0))} />
-                        </div>
-
-                        <div className="w-50 d-flex">
-                            <label className="me-2 ">2:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[2] : new XY(0, 0))} />
-                        </div>
-                    </div>
-                    <div className="d-flex">
-                        <div className="w-50 d-flex me-2">
-                            <label className="me-2 ">3:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[1] : new XY(0, 0))} />
-                        </div>
-                        <div className="w-50 d-flex">
-                            <label className="me-2 ">4:</label>
-                            <input disabled name="myInput" value={getSelectedPointCoorString(selectedPoints ? selectedPoints[3] : new XY(0, 0))} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="d-flex justify-content-center">
-                <div className="me-1"><UiButton onClick={calibrateData}>Confirm points</UiButton></div>
-            </div>
             <h2 className={getMenuHightlight(CalibrationCreationSteps.ENTER_REAL_WORLD_MEASUREMENTS, currentMenuStep)}>
                 <span className="heading-circle">{CalibrationCreationSteps.ENTER_REAL_WORLD_MEASUREMENTS.valueOf()}</span>
                 Enter real world measurements
             </h2>
             <h2 className={getMenuHightlight(CalibrationCreationSteps.CONFIRM, currentMenuStep)}>
                 <span className="heading-circle">{CalibrationCreationSteps.CONFIRM.valueOf()}</span>
-                Confirm
+                Create Homography Matrix
             </h2>
-
             <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
-
-
-            <div className="divider"></div>
-            <div>{returnValue}</div>
         </div>
     )
 }

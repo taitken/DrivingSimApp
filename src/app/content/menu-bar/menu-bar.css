@@ -1,8 +1,8 @@
-/* Left Panel (Instructions) */
+@import './../../styles/pallete.css';
+
 .left-panel {
   padding: 50px;
   border-radius: 10px;
-  background-color: #f4f5f6;
   width: 20%;
   min-width: 250px;
   text-align: center;
@@ -10,6 +10,8 @@
 
 .menu-heading-selected {
   font-weight: bold;
+  color: var(--primary-color);
+  
 }
 
 .menu-heading-completed {
@@ -22,10 +24,11 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #333;
-  color: #fff;
+  border: 1px solid #dfdfff;
+  background-color: #fff;
+  color: var(--text-primary) !important;
   text-align: center;
-  line-height: 20px;
+  line-height: 18px;
   margin-right: 8px;
   font-size: 10px;
 }

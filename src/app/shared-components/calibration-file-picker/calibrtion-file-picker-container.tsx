@@ -20,12 +20,10 @@ export function CalibrationFilePickerContainer({ eventEmitterService }: { eventE
 
     return (
         <>
-            <div className="content-container">
-                <h3 >Select Homography File</h3>
-                <p>Please select a homography file that was created in the 'Calibration Creation' process. This file contains instructions to the analytics process of how video file pixels map to real world distances.</p>
-                <CalibrationFilePicker onSelectFile={onHomographyRowSelect}></CalibrationFilePicker>
-                <UiButton size="lg" style="accent" className='mt-3 ms-auto' disabled={!selectedFile} onClick={confirmSelection}>Confirm</UiButton>
-            </div>
+            <h3 className="text-primary">Select Homography File</h3>
+            <p>Please select a homography file that was created in the 'Calibration Creation' process. This file contains instructions to the analytics process of how video file pixels map to real world distances.</p>
+            <CalibrationFilePicker onSelectFile={onHomographyRowSelect}></CalibrationFilePicker>
+            <UiButton size="lg" style="accent" className='mt-4 ms-auto' disabled={!selectedFile} onClick={confirmSelection}>Confirm</UiButton>
         </>
     )
 }

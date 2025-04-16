@@ -24,6 +24,10 @@ export function VideoCropperContainer({ eventEmitterService }: { eventEmitterSer
         }
     }, []);
 
+    function nextStep() {
+        eventEmitterService.nextStep();
+    }
+
     function skip() {
         eventEmitterService.selectedVideoSectionEmitter.update(null)
         eventEmitterService.nextStep();
@@ -35,10 +39,10 @@ export function VideoCropperContainer({ eventEmitterService }: { eventEmitterSer
 
     return (
         <>
-            <div className="content-container">
-                <h3 >Crop</h3>
-                <p>If your video contains footage from multiple cameras, you may want to crop the image to only show video from a selected camera.</p>
-                <div className="mb-2 d-flex">
+            <h3 className="text-primary">Crop Video</h3>
+            <p>If your video contains footage from multiple cameras, you may want to crop the image to only show video from a selected camera.</p>
+            <div className="mb-2 w-100">
+                <div className="d-flex ms-auto me-auto w-75">
                     <div className="form-group me-2">
                         <span>Columns</span>
                         <input className="form-field" type="number" name="myInput" value={rowCols.x} onChange={(e) => { if (validate(e)) eventEmitterService.croppedVideoSections.update(new XY(+e.target.value, rowCols.y)) }} />
@@ -48,13 +52,14 @@ export function VideoCropperContainer({ eventEmitterService }: { eventEmitterSer
                         <input className="form-field" type="number" name="myInput" value={rowCols.y} onChange={(e) => { if (validate(e)) eventEmitterService.croppedVideoSections.update(new XY(rowCols.x, +e.target.value)) }} />
                     </div>
                 </div>
-                <div className="mb-3">
-                    <VideoCropper rowCols={rowCols} eventEmitterService={eventEmitterService}></VideoCropper>
-                </div>
-                <div className="footer ms-auto mt-auto ">
-                    <UiButton className="me-2" onClick={skip} style="accent" size="lg">Skip</UiButton>
-                    <UiButton onClick={skip} disabled={selectedSection == null} style="accent" size="lg">Confirm</UiButton>
-                </div>
+
+            </div>
+            <div className="mb-3">
+                <VideoCropper rowCols={rowCols} eventEmitterService={eventEmitterService}></VideoCropper>
+            </div>
+            <div className="footer ms-auto mt-4 ">
+                <UiButton className="me-2" onClick={skip} style="accent" size="lg">Skip</UiButton>
+                <UiButton onClick={nextStep} disabled={selectedSection == null} style="accent" size="lg">Confirm</UiButton>
             </div>
         </>
     )

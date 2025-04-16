@@ -5,7 +5,8 @@ export enum CalibrationTestingSteps {
   PICK_CALIBRATION_FILE,
   PICK_VIDEO,
   CROP_VIDEO,
-  SELECT_TWO_POINTS
+  SELECT_TWO_POINTS,
+  RESULT
 }
 
 export class CalibrationTestingService extends BaseContentService {

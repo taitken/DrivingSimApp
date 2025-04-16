@@ -27,7 +27,7 @@ export default function CalibrationTestingMenu() {
             sub2.unsubscribe();
             sub3.unsubscribe();
         }
-    });
+    },[]);
 
     function getSelectedPointCoorString(points: XY) {
         if (points == null)
@@ -79,12 +79,12 @@ export default function CalibrationTestingMenu() {
                 <span className="heading-circle">4</span>
                 Select Two Points
             </h2>
+            <h2 className={getMenuHightlight(CalibrationTestingSteps.RESULT, currentMenuStep)}>
+                <span className="heading-circle">5</span>
+                Results
+            </h2>
             <div className="d-flex justify-content-center">
-                <div className="me-1"><UiButton onClick={calcDistance}>Calculate Distance</UiButton></div>
                 <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
-            </div>
-            <div>
-                Result: {returnValue}
             </div>
         </div>
     )

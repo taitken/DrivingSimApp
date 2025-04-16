@@ -5,6 +5,7 @@ import { SelectVideoBoxContainer } from "../../../shared-components/select-video
 import { VideoCanvasContainer } from "../../../shared-components/video-canvas/video-canvas-container";
 import { CalibrationFilePickerContainer } from "../../../shared-components/calibration-file-picker/calibrtion-file-picker-container";
 import { VideoCropperContainer } from "../../../shared-components/video-cropper/video-cropper-container";
+import { CalibrationTestingResult } from "./calibration-testing-results";
 
 
 export function CalibrationTestingContent() {
@@ -28,6 +29,7 @@ export function CalibrationTestingContent() {
             {selectedStep == CalibrationTestingSteps.PICK_VIDEO && <SelectVideoBoxContainer eventEmitterService={eventEmitterService}></SelectVideoBoxContainer>}
             {selectedStep == CalibrationTestingSteps.CROP_VIDEO && <VideoCropperContainer eventEmitterService={eventEmitterService}></VideoCropperContainer>}
             {selectedStep == CalibrationTestingSteps.SELECT_TWO_POINTS && <VideoCanvasContainer eventEmitterService={eventEmitterService} numberSelectedPoints={2} description={selectPointsDesc}></VideoCanvasContainer>}
+            {selectedStep == CalibrationTestingSteps.RESULT && <CalibrationTestingResult></CalibrationTestingResult>}
         </>
     )
 }
