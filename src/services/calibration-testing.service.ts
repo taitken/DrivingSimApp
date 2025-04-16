@@ -17,11 +17,7 @@ export class CalibrationTestingService extends BaseContentService {
   }
 
   public resetEmitters() {
-    this.videoFileEmitter.update(null);
-    this.selectedVideoSectionEmitter.update(null);
-    this.selectedCanvasPointsEmitter.update(null);
-    this.croppedVideoSections.update(null);
-    this.selectedHomographyFile.update(null);
+    super.resetEmitters();
     this.stepEmitter.update(CalibrationTestingSteps.PICK_CALIBRATION_FILE);
   }
 }

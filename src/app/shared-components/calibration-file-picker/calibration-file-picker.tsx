@@ -8,9 +8,7 @@ export function CalibrationFilePicker({onSelectFile} : {onSelectFile: (rowData: 
 
     const tableHeaders = [
         new ColumnMetaData("File Name",  "fileName"),
-        new ColumnMetaData("Test",  "test"),
     ];
-
     const [tableData, setTableData] = useState(new TableData(
         tableHeaders,
         []
@@ -18,7 +16,7 @@ export function CalibrationFilePicker({onSelectFile} : {onSelectFile: (rowData: 
     useEffect(() => {
         ServiceProvider.ipcService.getFolderContents("/resources/homography_matrices", ["json"])
             .then((result) => {
-                setTableData(new TableData(tableHeaders, result.map(file => { return { fileName: file, test: "test" } })))
+                setTableData(new TableData(tableHeaders, result.map(file => { return { fileName: file } })))
             })
     }, []);
 

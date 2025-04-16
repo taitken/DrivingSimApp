@@ -14,7 +14,7 @@ export function SelectVideoBoxContainer({ eventEmitterService }: { eventEmitterS
             <h3 className="text-primary">Select Video</h3>
             <p>Please select a video file either by dragging and dropping the file into the area below, or clicking the area below to bring up the file explorer.</p>
             <div className="canvas-container">
-                <SelectVideoBox videoSelectFunc={onVideoSelect}></SelectVideoBox>
+                <SelectVideoBox videoSelectFunc={onVideoSelect} eventEmitterService={eventEmitterService}></SelectVideoBox>
             </div >
         </>
     )

@@ -11,6 +11,9 @@ To run locally use the following command while in the projects root directory:
 ##########################
     Electron Functions
 ##########################
+To install dependency packages run the following command:
+"npm install"
+
 Uses electron-forge to create an executable:
 "npm run make"
 

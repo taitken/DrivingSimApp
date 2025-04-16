@@ -11,23 +11,22 @@ class VideoAnalysisService:
     camera_matrix = None
     dist_coeffs = None
 
-    def analyse_video(self, homography_matrix_file: str, base_name: str, crop_top_left: XY, crop_bottom_right: XY, wheel_position: XY):
+    def analyse_video(self, homography_matrix_file: str, video_file: str, crop_top_left: XY, crop_bottom_right: XY, wheel_position: XY):
         """
         Creates a homography matrix, and maps two given test points
         """
-        aest_start_time = UtilityService.extract_aest_from_filename(base_name)
+        aest_start_time = UtilityService.extract_aest_from_filename(video_file)
         utc_start_time = UtilityService.convert_aest_to_utc(aest_start_time)
         utc_decimal_start = UtilityService.utc_to_decimal(utc_start_time)
 
         # Load the homography matrix from the JSON file
-        self.homography_matrix = UtilityService.load_homography_matrix(UtilityService.HOMOGRAPHY_OUTPUT_FOLDER + "/" + homography_matrix_file)
+        self.homography_matrix = UtilityService.load_homography_matrix(homography_matrix_file)
         
         # Load calibration data
         calibration_data = np.load(self.CALIBRATION_FILE_PATH)
         self.camera_matrix = calibration_data['camera_matrix']
         self.dist_coeffs = calibration_data['dist_coeffs']
-        video_input_path = UtilityService.select_video_file()
-        video_capture = cv2.VideoCapture(video_input_path)
+        video_capture = cv2.VideoCapture(UtilityService.TMP_VIDEO_FOLDER + "/" + video_file)
 
         if not video_capture.isOpened():
             print("Error: Video file could not be opened.")

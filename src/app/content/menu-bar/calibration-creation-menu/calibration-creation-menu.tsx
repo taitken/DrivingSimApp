@@ -12,24 +12,14 @@ export default function CalibrationCreationMenu() {
     const [selectedPoints, setSelectedPoints] = useState([new XY(0, 0), new XY(0, 0), new XY(0, 0), new XY(0, 0)]);
 
     useEffect(() => {
-        let sub1 = ServiceProvider.calibrationCreationService.selectedCanvasPointsEmitter.listenForUpdates((newSelectedPoints) => {
-            setSelectedPoints(newSelectedPoints)
-        });
-        let sub2 = ServiceProvider.calibrationCreationService.stepEmitter.listenForUpdates((newMenuStep: CalibrationCreationSteps) => {
+
+        let sub1 = ServiceProvider.calibrationCreationService.stepEmitter.listenForUpdates((newMenuStep: CalibrationCreationSteps) => {
             setMenuStep(newMenuStep)
         });
         return () => {
             sub1.unsubscribe();
-            sub2.unsubscribe();
         }
     }, []);
-
-    function getSelectedPointCoorString(points: XY) {
-        if (points == null)
-            return "0, 0"
-
-        return Math.round(points.x).toString() + ", " + Math.round(points.y).toString()
-    }
 
     function getMenuHightlight(thisMenuStep: CalibrationCreationSteps, selectedMenuStep: CalibrationCreationSteps): string {
         if (thisMenuStep == selectedMenuStep)
@@ -37,19 +27,6 @@ export default function CalibrationCreationMenu() {
         if (thisMenuStep < selectedMenuStep)
             return "menu-heading-completed"
         return "";
-    }
-
-    function calibrateData() {
-        if (selectedPoints.length == 4
-            && (
-                selectedPoints[0].x != 0 && selectedPoints[0].y != 0 &&
-                selectedPoints[1].x != 0 && selectedPoints[1].y != 0 &&
-                selectedPoints[2].x != 0 && selectedPoints[2].y != 0 &&
-                selectedPoints[3].x != 0 && selectedPoints[3].y != 0
-            )
-        ) {
-            ServiceProvider.calibrationCreationService.stepEmitter.update(CalibrationCreationSteps.ENTER_REAL_WORLD_MEASUREMENTS);
-        }
     }
 
     function resetToStart() {

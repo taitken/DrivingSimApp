@@ -11,6 +11,7 @@ from models.xy import XY
 class UtilityService:
     RESOURCE_PATH = os.getcwd() + '\\resources'
     HOMOGRAPHY_OUTPUT_FOLDER = RESOURCE_PATH + '\\homography_matrices'
+    TMP_VIDEO_FOLDER = RESOURCE_PATH + '\\tmp'
     OUTPUT_FOLDER = RESOURCE_PATH + '\\output'
     
     @staticmethod

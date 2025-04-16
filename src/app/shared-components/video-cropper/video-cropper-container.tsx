@@ -30,6 +30,7 @@ export function VideoCropperContainer({ eventEmitterService }: { eventEmitterSer
 
     function skip() {
         eventEmitterService.selectedVideoSectionEmitter.update(null)
+        eventEmitterService.croppedVideoSections.update(new XY(1, 1));
         eventEmitterService.nextStep();
     }
 
@@ -52,7 +53,6 @@ export function VideoCropperContainer({ eventEmitterService }: { eventEmitterSer
                         <input className="form-field" type="number" name="myInput" value={rowCols.y} onChange={(e) => { if (validate(e)) eventEmitterService.croppedVideoSections.update(new XY(rowCols.x, +e.target.value)) }} />
                     </div>
                 </div>
-
             </div>
             <div className="mb-3">
                 <VideoCropper rowCols={rowCols} eventEmitterService={eventEmitterService}></VideoCropper>

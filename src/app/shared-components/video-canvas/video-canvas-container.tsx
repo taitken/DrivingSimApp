@@ -25,7 +25,7 @@ export function VideoCanvasContainer({ eventEmitterService, numberSelectedPoints
             <p>{description}</p>
             <VideoCanvas eventEmitterService={eventEmitterService} numberSelectedPoints={numberSelectedPoints}></VideoCanvas>
             <div className="footer ms-auto mt-4 ">
-            <UiButton size="lg" style="accent" className='mt-4 ms-auto' disabled={selectedPoints?.length != numberSelectedPoints} onClick={confirmSelection}>Confirm</UiButton>
+                <UiButton size="lg" style="accent" className='mt-4 ms-auto' disabled={selectedPoints?.length != numberSelectedPoints} onClick={confirmSelection}>Confirm</UiButton>
             </div>
         </>
     )

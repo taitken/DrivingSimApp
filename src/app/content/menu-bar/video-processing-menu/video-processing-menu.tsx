@@ -6,7 +6,7 @@ import { ServiceProvider } from "../../../../services/service-provider.service";
 import { UiButton } from "../../../ui/ui-button/ui-button";
 import { VideoProcessingSteps } from "../../../../services/video-processing.service";
 
-export default function CalibrationTestingMenu() {
+export default function VideoProcessingMenu() {
     const [currentMenuStep, setMenuStep] = useState(VideoProcessingSteps.PICK_CALIBRATION_FILE);
     const [returnValue, setReturnValue] = useState('Waiting for API');
     const [videoFile, setVideoFile] = useState(null);
@@ -63,17 +63,23 @@ export default function CalibrationTestingMenu() {
                 <span className="heading-circle">2</span>
                 Select Video For Testing
             </h2>
-            <h2 className={getMenuHightlight(VideoProcessingSteps.SELECT_WHEEL_POSITION, currentMenuStep)}>
+            <h2 className={getMenuHightlight(VideoProcessingSteps.CROP_VIDEO, currentMenuStep)}>
                 <span className="heading-circle">3</span>
+                Crop Video
+            </h2>
+            <h2 className={getMenuHightlight(VideoProcessingSteps.SELECT_WHEEL_POSITION, currentMenuStep)}>
+                <span className="heading-circle">4</span>
                 Select wheel position
             </h2>
+            <h2 className={getMenuHightlight(VideoProcessingSteps.PROCESS, currentMenuStep)}>
+                <span className="heading-circle">5</span>
+                Prcoess Video
+            </h2>
             <div className="d-flex justify-content-center">
-                <div className="me-1"><UiButton onClick={resetToStart}>Process Video</UiButton></div>
                 <div><UiButton onClick={resetToStart}>Reset</UiButton></div>
             </div>
 
             <div className="divider"></div>
-            <div>{returnValue}</div>
         </div>
     )
 }

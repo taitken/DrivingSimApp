@@ -30,21 +30,22 @@ def calc_distance():
     secondX: int = request.args.get('secondX')
     secondY: int = request.args.get('secondY')
     homography_matrix_file: str = request.args.get('homographyMatrixFile')
-    real_world_poitns = []
-    real_world_poitns.append(XY(firstX, firstY))
-    real_world_poitns.append(XY(secondX, secondY))
+    real_world_points = []
+    real_world_points.append(XY(firstX, firstY))
+    real_world_points.append(XY(secondX, secondY))
  
     calibration_service = CalibrationService()
-    return calibration_service.check_distance_between_two_real_world_points(homography_matrix_file, real_world_poitns)
+    return calibration_service.check_distance_between_two_real_world_points(homography_matrix_file, real_world_points)
 
 @endpoint_blueprint.route('/process-video', methods=['POST'])
 def process_video():
     # Handle request objects
     request_data = request.get_json()
     homography_matrix_file: str = request_data['homographyMatrixFile']
+    video_file: str = request_data['videoFileName']
     crop_top_left: XY = XY.from_dict(request_data['cropTopLeft'])
     crop_bottom_right: XY = XY.from_dict(request_data['cropBottomRight'])
     wheel_position: XY = XY.from_dict(request_data['wheelPosition'])
 
     video_analysis_service = VideoAnalysisService()
-    return video_analysis_service.analyse_video(homography_matrix_file, 'CANTRACK_01_006_V1_D1_2025-03-04 10-51-08', crop_top_left, crop_bottom_right, wheel_position)
+    return video_analysis_service.analyse_video(homography_matrix_file, video_file, crop_top_left, crop_bottom_right, wheel_position)

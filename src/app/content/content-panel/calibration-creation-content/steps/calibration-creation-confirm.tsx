@@ -23,17 +23,17 @@ export function CalibrationCreationConfirm() {
         ],
         rowData: [
             { key: "Video File Name", value: file.name },
-            { key: "Real world object width", value: rwDim.width },
-            { key: "Real world object height", value: rwDim.height },
-            { key: "Pixel point #1", value: selectedPoints[0].x.toString() + ", " + selectedPoints[0].y.toString() },
-            { key: "Pixel point #2", value: selectedPoints[1].x.toString() + ", " + selectedPoints[1].y.toString() },
-            { key: "Pixel point #3", value: selectedPoints[2].x.toString() + ", " + selectedPoints[2].y.toString() },
-            { key: "Pixel point #4", value: selectedPoints[3].x.toString() + ", " + selectedPoints[3].y.toString() },
+            { key: "Real world object width", value: rwDim.width.toString() + " cm" },
+            { key: "Real world object height", value: rwDim.height.toString() + " cm" },
+            { key: "Pixel point #1", value: selectedPoints[0].x.toString() + " px, " + selectedPoints[0].y.toString() + " px"},
+            { key: "Pixel point #2", value: selectedPoints[1].x.toString() + " px, " + selectedPoints[1].y.toString() + " px"},
+            { key: "Pixel point #3", value: selectedPoints[2].x.toString() + " px, " + selectedPoints[2].y.toString() + " px"},
+            { key: "Pixel point #4", value: selectedPoints[3].x.toString() + " px, " + selectedPoints[3].y.toString() + " px"},
         ]
     }
     function createMatrix() {
         setConfirmed(true);
-        ServiceProvider.backendService.calibrate(file, selectedPoints).then(async results => {
+        ServiceProvider.backendService.calibrate(file, selectedPoints, rwDim).then(async results => {
             await new Promise(f => setTimeout(f, 1000));
             setResults(results.data);
         });

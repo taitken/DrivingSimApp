@@ -1,10 +1,13 @@
 import { EventEmitter } from "../utility/event-emitter";
 import { BaseContentService } from "./base-content.service";
+import { ServiceProvider } from "./service-provider.service";
 
 export enum VideoProcessingSteps {
   PICK_CALIBRATION_FILE,
   PICK_VIDEO,
-  SELECT_WHEEL_POSITION
+  CROP_VIDEO,
+  SELECT_WHEEL_POSITION,
+  PROCESS
 }
 
 export class VideoProcessingService extends BaseContentService {
@@ -14,11 +17,15 @@ export class VideoProcessingService extends BaseContentService {
     this.stepEmitter.update(this.stepEmitter.getValue() + (stepsToAdd ?? 1))
   }
   public resetEmitters() {
-    this.videoFileEmitter.update(null);
-    this.selectedVideoSectionEmitter.update(null);
-    this.selectedCanvasPointsEmitter.update([]);
-    this.croppedVideoSections.update(null);
-    this.selectedHomographyFile.update(null);
+    super.resetEmitters();
     this.stepEmitter.update(VideoProcessingSteps.PICK_CALIBRATION_FILE);
   }
+
+  public selectFile(input: HTMLInputElement, handleFileFunc?: (file: File)=>void): void
+  {
+    ServiceProvider.ipcService.copyFileToTmp().then(async result => {
+      handleFileFunc(result);
+    })
+  }
+
 }

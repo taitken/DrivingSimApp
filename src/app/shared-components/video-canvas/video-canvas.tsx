@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import './video-canvas.css'
 import { XY } from "../../../models/xy.model";
 import { BaseContentService } from "../../../services/base-content.service";
+import { Dimensions } from "../../../models/dimension.model";
 
 interface UiButtonInterface {
     eventEmitterService: BaseContentService,
@@ -38,8 +39,6 @@ export function VideoCanvas({ eventEmitterService, numberSelectedPoints }: UiBut
             const video = videoRef.current;
             video.src = fileURL;
             video.preload = 'auto';
-            video.muted = true;
-            video.playsInline = true;
             video.load();
             video.onloadeddata = loadedVideoData;
             video.onseeked = onSeekedVideo;
@@ -63,7 +62,7 @@ export function VideoCanvas({ eventEmitterService, numberSelectedPoints }: UiBut
     }
 
     function selectCanvasDot(event) {
-        if (selectedPoints.length < numberSelectedPoints) {
+        if (eventEmitterService.selectedCanvasPointsEmitter.getValue().length < numberSelectedPoints) {
             let ctx = calibrationCanvas.current.getContext('2d');
             let rect = calibrationCanvas.current.getBoundingClientRect();
             ctx.fillStyle = "red";
@@ -94,9 +93,30 @@ export function VideoCanvas({ eventEmitterService, numberSelectedPoints }: UiBut
                     ctx.lineTo(orderedPoints[0].x, orderedPoints[0].y);
                     ctx.stroke();
                 }
-                eventEmitterService.selectedCanvasPointsEmitter.update(selectedPoints);
+                // Transform to video pixel locations
+                let translatedPoints = translateToVideoPixels(
+                    selectedPoints,
+                    eventEmitterService.selectedVideoSectionEmitter.getValue(),
+                    eventEmitterService.croppedVideoSections.getValue(),
+                    rect,
+                    videoRef.current
+                );
+                eventEmitterService.videoDimensions.update(new Dimensions(videoRef.current.videoWidth, videoRef.current.videoHeight));
+                eventEmitterService.selectedCanvasPointsEmitter.update(translatedPoints);
             }
         }
+    }
+
+    function translateToVideoPixels(selectedPoints: XY[], selectedVideoSection: XY, totalVideoSections: XY, rect: DOMRect, videoFile: HTMLVideoElement): XY[] {
+        let baseX = selectedVideoSection.x * rect.width;
+        let baseY = selectedVideoSection.y * rect.height;
+
+        let widthScaleFactor = videoFile.videoWidth / (rect.width * totalVideoSections.x);
+        let heightScaleFactor = videoFile.videoHeight / (rect.height * totalVideoSections.y);
+        return selectedPoints.map(point =>
+            new XY(
+                Math.round(Math.min(Math.max((point.x + baseX) * widthScaleFactor, 0), videoFile.videoWidth)),
+                Math.round(Math.min(Math.max((point.y + baseY) * heightScaleFactor), videoFile.videoHeight))));
     }
 
     function selectVideoSection(xy: XY) {

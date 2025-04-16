@@ -104,7 +104,8 @@ app.on('ready', () => {
           let filePath = selection.filePaths[0];
           let fileName = filePath.split(/(\\|\/)/g).pop();
           fs.copyFileSync(selection.filePaths[0], path.join(process.cwd(), 'resources', 'tmp', fileName));
-          return fileName;
+          let buffer = fs.readFileSync(path.join(process.cwd(), 'resources', 'tmp', fileName));
+          return {buffer: buffer, fileName: fileName};
         }
       });
   });
@@ -117,7 +118,7 @@ app.on('window-all-closed', () => {
   let workingDir = path.join(process.cwd(), 'resources', 'tmp');
   fs.readdir(workingDir, (err, files) => {
     if (err) throw err;
-  
+
     for (const file of files) {
       fs.unlink(path.join(workingDir, file), (err) => {
         if (err) throw err;
